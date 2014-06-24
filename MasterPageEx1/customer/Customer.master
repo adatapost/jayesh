@@ -1,0 +1,35 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Customer.master.cs" Inherits="customer_Customer" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+    <asp:ContentPlaceHolder id="head" runat="server">
+    </asp:ContentPlaceHolder>
+    <link href="../Styles/style.css" rel="stylesheet" />
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div id="main">
+        <div id="header" class="pad5">
+            <div class="fl">
+                <h1 class="shadow-text">Customer Panel</h1>
+            </div>
+            <div class="fr">
+                <h2><a href="#">Logout</a></h2>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div id="content" class="border-black">
+        <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server">
+        
+        </asp:ContentPlaceHolder>
+            </div>
+        <div id="footer">
+            <p>&copy; ABC Ltd - 2014</p>
+        </div>
+    </div>
+    </form>
+</body>
+</html>

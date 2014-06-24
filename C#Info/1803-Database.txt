@@ -1,0 +1,383 @@
+Creating a database, connecting with ADO.NET and execute queries
+=====================================================================
+
+1. Create EmpDB.mdf with two table:
+
+CREATE TABLE [dbo].Dept
+(
+	[DeptID] INT NOT NULL , 
+    [DeptName] VARCHAR(50) NULL, 
+    CONSTRAINT [PK_Dept] PRIMARY KEY ([DeptID])
+)
+CREATE TABLE [dbo].Emp
+(
+	[EmpID] INT NOT NULL PRIMARY KEY, 
+    [EmpName] VARCHAR(50) NULL, 
+    [JoinDate] DATE NULL, 
+    [DeptID] INT NULL, 
+    CONSTRAINT [FK_Emp_ToDept] FOREIGN KEY (DeptID) REFERENCES Dept(DeptID)
+)
+
+
+2. Obtain the connectionString.
+
+    => Select database name at Server Explorer + right mouse click + 	properties + Copy the value of "ConnectionString" and use it.
+
+Ex:
+
+Data Source=(LocalDB)\v11.0;AttachDbFilename=c:\csnet\Jayesh\dbapp1\dbapp1\EmpDB.mdf;Integrated Security=True
+
+
+3. In code file (.cs), import the System.Data.SqlClient because we're using MSSQL Server product.
+
+
+4. Create Objects of SqlConnection,SqlCommand etc.
+
+Example:
+
+
+using System.Data.SqlClient;
+
+public class Test
+{
+    static void Main()
+    {
+        const string CNSTR = @"Data Source=(LocalDB)\v11.0;AttachDbFilename=c:\csnet\Jayesh\dbapp1\dbapp1\EmpDB.mdf;Integrated Security=True";
+
+        using (var cn = new SqlConnection())
+        {
+            using (var cmd = new SqlCommand())
+            {
+                cn.ConnectionString = CNSTR;
+                cmd.Connection = cn;
+                cmd.CommandText = "insert into dept values (@p1,@p2)";
+                cmd.Parameters.AddWithValue("@p1", 20);
+                cmd.Parameters.AddWithValue("@p2", "HR");
+                cn.Open();
+                cmd.ExecuteNonQuery();
+                cn.Close();
+                Console.WriteLine("Added");
+            }
+        }
+    }
+}
+
+MSSQL and OleDb (MS-Access) uses @paramName to define parameter variables.
+
+Oracle uses &paranName to define param var.
+
+MySql uses ? or :paramName to define param var.
+
+Note: Always use proper parameter names instead of @p1,....
+
+
+Example:
+
+       const string CNSTR = @"Copy+Paste";
+        var id = 30;
+        var name = "Production";
+        using (var cn = new SqlConnection())
+        {
+            using (var cmd = new SqlCommand())
+            {
+                cn.ConnectionString = CNSTR;
+                cmd.Connection = cn;
+                cmd.CommandText = "insert into dept values                          (@deptId,@deptName)";
+                cmd.Parameters.AddWithValue("@deptId", id);
+                cmd.Parameters.AddWithValue("@deptName", name);
+                cn.Open();
+                cmd.ExecuteNonQuery();
+                cn.Close();
+                Console.WriteLine("Added");
+            }
+        }
+
+Update/Delete a row
+===================
+
+static void Main()
+    {
+        const string CNSTR = @"Data Source=(LocalDB)\v11.0;AttachDbFilename=c:\csnet\Jayesh\dbapp1\dbapp1\EmpDB.mdf;Integrated Security=True";
+        var id = 10;
+        var name = "AAAAAA";
+        using (var cn = new SqlConnection())
+        {
+            using (var cmd = new SqlCommand())
+            {
+                cn.ConnectionString = CNSTR;
+                cmd.Connection = cn;
+                cmd.CommandText = "update dept set deptName=@deptName where deptId=@deptId";
+                cmd.Parameters.AddWithValue("@deptId", id);
+                cmd.Parameters.AddWithValue("@deptName", name);
+                cn.Open();
+                cmd.ExecuteNonQuery();
+                cn.Close();
+                Console.WriteLine("Updated");
+            }
+        }
+
+
+object ExecuteScalar()
+========================
+It returns value from 1st column and 1st row (ie. single value) of type Object.
+
+ static void Main()
+    {
+        const string CNSTR = @"Data Source=(LocalDB)\v11.0;AttachDbFilename=c:\csnet\Jayesh\dbapp1\dbapp1\EmpDB.mdf;Integrated Security=True";
+       
+        using (var cn = new SqlConnection())
+        {
+            using (var cmd = new SqlCommand())
+            {
+                cn.ConnectionString = CNSTR;
+                cmd.Connection = cn;
+                cmd.CommandText = "select max(deptId) from dept";
+                cn.Open();
+                var result = cmd.ExecuteScalar();
+                if (result != null)
+                {
+                    Console.WriteLine("Max dept id : " + result);
+                }
+
+                cmd.CommandText = "select count(*) from dept";
+                int count = Convert.ToInt32(cmd.ExecuteScalar());
+                Console.WriteLine("Total rows : " + count);
+
+                var id = 30;
+                cmd.CommandText = "select deptName from dept where deptId=@deptId";
+                cmd.Parameters.AddWithValue("@deptId", id);
+                result = cmd.ExecuteScalar();
+                if (result != null)
+                {
+                    Console.WriteLine("Dept Name : " + result);
+                }
+                else
+                {
+                    Console.WriteLine("Dept not found.");
+                }
+                cn.Close();
+            }
+        }
+    }
+
+SqlDataReader ExecuteReader()
+==============================
+It executes SELECT statement and returns cursor (Pointer to fetch row).
+
+ static void Main()
+    {
+        const string CNSTR = @"Copy+Paste";
+
+        using (var cn = new SqlConnection())
+        {
+            using (var cmd = new SqlCommand())
+            {
+                cn.ConnectionString = CNSTR;
+                cmd.Connection = cn;
+                cmd.CommandText = "select * from dept order by deptName desc";
+                cn.Open();
+                using (var dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                       // Console.WriteLine(dr[0] + " " + dr["deptName"]);
+                        int n = dr.GetInt32(0);
+                        string m = dr.GetString(1);
+                        Console.WriteLine(n + " " + m);
+                    }
+                }
+                cn.Close();
+            }
+        }
+    }
+
+Stored-procedures
+====================================
+
+CREATE PROCEDURE [dbo].[testProc]
+   
+AS
+	 /* local variables */
+	 declare @cnt int
+
+	 set @cnt = 10  /* set */
+
+	 select @cnt  /* print */
+	 
+RETURN 0
+
+
+CREATE PROCEDURE [dbo].addition
+	@no1 int = 0,
+	@no2 int =0
+AS
+	 declare @no3 int
+	 set @no3 = @no1 + @no2
+
+	 select @no3 as Sum
+RETURN 0
+
+
+
+Example to call 'testProc'
+---------------------------
+ static void Main()
+    {
+        const string CNSTR = @"Data Source=(LocalDB)\v11.0;AttachDbFilename=c:\csnet\Jayesh\dbapp1\dbapp1\EmpDB.mdf;Integrated Security=True";
+
+        using (var cn = new SqlConnection())
+        {
+            using (var cmd = new SqlCommand())
+            {
+                cn.ConnectionString = CNSTR;
+                cmd.Connection = cn;
+                cmd.CommandText = "testProc";
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                cn.Open();
+                var result = cmd.ExecuteScalar();
+                cn.Close();
+                Console.WriteLine(result);
+            }
+        }
+    }
+
+Example to call 'addition'
+================================
+static void Main()
+    {
+        const string CNSTR = @"Data Source=(LocalDB)\v11.0;AttachDbFilename=c:\csnet\Jayesh\dbapp1\dbapp1\EmpDB.mdf;Integrated Security=True";
+
+        using (var cn = new SqlConnection())
+        {
+            using (var cmd = new SqlCommand())
+            {
+                cn.ConnectionString = CNSTR;
+                cmd.Connection = cn;
+                cmd.CommandText = "addition";
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@no1", 90);
+                cmd.Parameters.AddWithValue("@no2", 100);
+                cn.Open();
+                var result = cmd.ExecuteScalar();
+                cn.Close();
+                Console.WriteLine(result);
+            }
+        }
+    }
+
+
+Procedure to insert a record into dept
+======================================
+
+CREATE PROCEDURE [dbo].addDept
+	@deptId int = 0,
+	@deptName varchar(50)
+AS
+	declare @cnt int
+
+	select @cnt = count(*) from dept
+	               where deptid=@deptId
+
+    if @cnt = 0 
+	  begin
+	    insert into dept values (@deptId, @deptName) 
+		 
+	  end
+      /* select @cnt */
+RETURN 0
+
+Execute 'addDept' using code:
+==============================
+ static void Main()
+    {
+        const string CNSTR = @"Data Source=(LocalDB)\v11.0;AttachDbFilename=c:\csnet\Jayesh\dbapp1\dbapp1\EmpDB.mdf;Integrated Security=True";
+
+        using (var cn = new SqlConnection())
+        {
+            using (var cmd = new SqlCommand())
+            {
+                cn.ConnectionString = CNSTR;
+                cmd.Connection = cn;
+                cmd.CommandText = "addDept";
+                cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@deptId",121);
+                cmd.Parameters.AddWithValue("@deptName", "ABCD");
+                cn.Open();
+               // Console.WriteLine(cmd.ExecuteScalar());
+                Console.WriteLine(cmd.ExecuteNonQuery());
+                cn.Close();
+                
+            }
+        }
+    }
+
+Example to insert a row into "Emp" table
+=========================================
+    static void Main()
+    {
+        const string CNSTR = @"Data Source=(LocalDB)\v11.0;AttachDbFilename=c:\csnet\Jayesh\dbapp1\dbapp1\EmpDB.mdf;Integrated Security=True";
+        var id = 30;
+        var name = "Rajesh";
+        var joinDate = DateTime.Now;
+        var deptId = 10;
+        using (var cn = new SqlConnection())
+        {
+            using (var cmd = new SqlCommand())
+            {
+                cn.ConnectionString = CNSTR;
+                cmd.Connection = cn;
+                cmd.CommandText = "insert into emp values (@empId,@empName,@joinDate,@deptId)";
+                cmd.Parameters.AddWithValue("@empId", id);
+                cmd.Parameters.AddWithValue("@empName", name);
+                cmd.Parameters.AddWithValue("@joinDate", joinDate);
+                cmd.Parameters.AddWithValue("@deptId", deptId);
+
+                cn.Open();
+                cmd.ExecuteNonQuery();
+                cn.Close();
+                Console.WriteLine("Added");
+            }
+        }
+    }
+
+Creating view
+===============
+To save select query (Simple, Joins or nested) into database
+
+Example:
+
+CREATE VIEW [dbo].ViewEmp
+	AS SELECT  Dept.DeptName, Emp.EmpID,
+	Emp.EmpName, Emp.JoinDate 
+	   from Dept,Emp
+	     where Emp.DeptID = Dept.DeptID
+
+
+Now, to use this view, execute "SELECT * FROM VIEWEMP"
+
+Example:
+
+ static void Main()
+    {
+        const string CNSTR = @"Data Source=(LocalDB)\v11.0;AttachDbFilename=c:\csnet\Jayesh\dbapp1\dbapp1\EmpDB.mdf;Integrated Security=True";
+
+        using (var cn = new SqlConnection())
+        {
+            using (var cmd = new SqlCommand())
+            {
+                cn.ConnectionString = CNSTR;
+                cmd.Connection = cn;
+                cmd.CommandText = "select * from ViewEmp";
+                cn.Open();
+                using (var dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                         Console.WriteLine(dr[0] + " " + dr[1] + " " + dr[2] + " " + dr[3]);
+                    }
+                }
+                cn.Close();
+            }
+        }
+    }

@@ -1,0 +1,313 @@
+C# Language
+===================================================
+
+C# is,
+
+ 1. CLS-Compliant language
+ 2. OOP language
+ 3. Statically typed language ad also support features of dynamic     language.
+ 
+[Note: Current version of C# is 5.0 ]
+
+
+How to learn C# from the scratch?
+
+In VS, we've "Console Application" project template which is the simplest environment to learn fundatamental of .net framework and language syntax. Input and output of console application targets the command prompt or command line interface.
+
+Compilation unit
+=================
+
+C# code is stored into .cs files and .cs file is called compilation unit. Note that it is not necessary that the code files have .cs extension.
+
+  General Structure of code file should be:
+
+  ------------------------
+  | Importing the namespaces
+  |--------------------------
+  | Type definition
+  ---------------------------
+
+Project Template
+=================
+Basically an application might contains hundreded of resources including program files, images , text document and so on. The Project Template is just simple option for the developer to include necessary code files, libraries references and compiler settings. 
+
+  We can compile single code file easily but what happen when we have   tons of code file into a project/app? The VS provide a simple solution to gather all resources, bundle and compile them according to compiler and build settings.
+
+Project Build
+=============
+  The "build" tool in VS arrange the resources, compile code files and finally generate an assembly (.dll or .exe). There are two types of build configurations exists in VS:
+    1. Debug Build : This is the default build for any project you've
+		     created in VS.
+                     This build uses debug API and VS support to                      compile the code for the developer's debuging                      purpose.
+
+    2. Release Build : Developer uses release build when they want to
+			produce an assembly for distribution to their
+			clients.
+
+
+C# Language basics
+===================
+
+In console app, we must have to define an entry-point Main method using one of the following syntax:
+
+   1. static void Main()
+   2. static int Main()
+   3. static void Main(string []args)
+   4. static int Main(string []args)
+
+
+Local variables
+===============
+Local variables in C# are not initialized automatically so we need to assign appropriate value before we use them.
+
+    int no;
+    no++;  // throws an error - variable "no" is not initialized.
+
+Example: Create Console App + Remove all content from program.cs and type following:
+
+public class A {} //valid
+private class B {} //invalid 
+
+
+System.Console class
+====================
+We will use methods of System.Console class to write data into command prompt or read value from command prompt:
+
+1. System.Console.WriteLine(data) -- Write with newline
+2. System.Console.Write(data) -- Write data at cursor 
+3. Ssytem.Console.ReadLine() -- Input string from console
+
+Example:
+
+class Test
+{
+  static void Main()
+   {
+     int no;
+
+     System.Console.WriteLine(no); // no is not initialized
+   }
+}
+
+
+Literals / constants
+====================
+
+The c# compiler uses different literals to store them into memory.
+
+Integer literal: is expressed via,
+
+     1. 10   - decimal
+     2. 012  - octal
+     3. 0xff - hexa
+
+Long literal : "l" or "L" suffix
+
+     10L - long
+     10  - int
+
+Double literal : 
+
+      10.10
+      1E+2
+
+Float literal : "f" or "F" suffix
+
+      10.10f
+
+Decimal literal : "m" or "M" suffix
+
+      10.10m
+
+boolean literal : true or false
+
+      bool status = true;
+
+char literal  : denoted with single quote
+
+      ANSI : 'a'  or '?'
+      UNICODE : '\u0000'  [ \u + four hex letter ]
+
+   
+class Test
+{
+    static void Main()
+    {
+        char ch = '\u2923';
+
+        System.Console.WriteLine(ch);
+    }
+}
+ 
+string literal: String literal is denoted by double quotes.
+   
+               : string literal include escape chars \n \t \a \b \" \%                   etc.
+
+     We need to escape backslash char by adding extra backslash:
+
+        string path1 = "c:\tc\bin";
+        string path2 = "c:\\tc\\bin";
+        System.Console.WriteLine(path1);
+        System.Console.WriteLine(path2);
+
+     We can use @ string verbetim operator to escape the backslash char:
+        string path1 = "c:\tc\bin";
+        string path2 = "c:\\tc\\bin";
+        string path3 = @"c:\tc\bin";
+        System.Console.WriteLine(path1);
+        System.Console.WriteLine(path2);
+        System.Console.WriteLine(path3);
+
+     We can create multi-line string using @ operator:
+
+string info = @"
+This is
+the
+third line.";
+
+ System.Console.WriteLine(info);
+
+
+Importing namespace and also creating new aliases
+====================================================
+
+ Importing the namespace means to instruct compiler that the specified type is written without adding namespace name.
+
+It means we must have to write fully qualified path of type if we miss the "using" statement.
+
+ Syntax:
+
+  using Namespace;
+  using Namespace.SubNamespace;
+Example:
+
+using System; <--- Importing namespace
+
+class Test
+{
+    static void Main()
+    {
+        Int32 no = 10;
+        Console.WriteLine(no);
+    }
+}
+
+
+To create alias for type name
+================================
+
+ Syntax:
+  
+ using Alias = TypeName;
+
+Example: 
+
+using System;
+using cn = System.Console;
+using Integer = System.Int32;
+
+class Test
+{
+    static void Main()
+    {
+        Integer no = 10;
+        cn.WriteLine(no);
+    }
+}
+
+Get Min and Max range value of simple type
+==========================================
+
+  Use datatype.MinValue and datatype.MaxValue property:
+
+  Console.WriteLine(double.MinValue + " " + double.MaxValue);
+
+
+The "var" keyword
+=============================================
+The "var" keyword is used to create  a "local" variable and it will assign datatype based upon the assigned value.
+
+  var no = 10;  
+  var name = "Hello";
+  var amount; <-- Error 
+
+Ex:
+
+   for (var i = 1; i <= 10; i++)
+        {
+            Console.WriteLine(i);
+        }
+
+The "dynamic" keyword
+===============================================
+The "dynamic" keyword is used to create a dynamic variable whose datatype will be changed when you change value. It means datatype is bound with data not a variable.
+
+You can use dynamic variable anywhere - as local var, field, method parameters, return type etc.
+ 
+        dynamic x = 10;
+        x++;
+        Console.WriteLine(x);
+        x = "Hi";
+        Console.WriteLine(x + " " + x.Length);
+
+Methods and method parameters 
+===============================================
+
+C# parameters are called by value by default. So between method calls, value being copied to actual parameter to formal parameters:
+
+Example: Called by value
+
+using System;
+
+class Test
+{
+    static void Main()
+    {
+        int n = 1, b = 2;
+        Print(n);
+        Print(b);
+        Console.WriteLine(n + " " + b); //1 2
+    }
+
+    static void Print(int n)
+    {
+        n = 100;
+    }
+}
+
+ 
+C# uses two keywords - out and ref to define reference parameter.
+
+  ref - parameter creates an alias and changes in ref parameter will         affect actual parameter.
+  out - Same as ref but within the function value of "out" parameter         must be assigned/changed.
+
+
+using System;
+
+class Test
+{
+    static void Main()
+    {
+        int n = 1, b = 2;
+        Print(ref n);
+        Show(out b);
+        Console.WriteLine(n + " " + b); //100 10
+    }
+
+    static void Print(ref int n)
+    {
+        n = 100;
+    }
+    static void Show(out int n)
+    {
+        n = 10;
+    }
+}
+
+
+ 
+
+     
+
+  
+

@@ -1,0 +1,42 @@
+The ASPX Page
+====================================================================
+
+The .aspx page (.aspx is an extension of regular text file). When you rename any regular text document to .aspx then ASP.NET server automatically consider it as a "class".
+
+For example,
+
+ sample.aspx (without code) is a class whose name is "sample_aspx" and will be stored into "sample_aspx.cs" code file when it is compiled.
+
+ public class sample_aspx: Page ...{}
+
+ It means any .aspx page must inherits the System.Web.UI.Page class.
+
+
+.ASPX Page Model
+================
+
+In website, you have two types of Page models that you can use any one of them to design or define .aspx page.
+
+1. Code inline model -- A single .aspx file which contains    HTML/CSS/JavaScript and C# code.
+
+<%@ Page Language="C#" %>
+
+<!doctype html>
+
+<script runat="server">
+  C# event code
+</script>
+<html>
+  ......
+</html>
+
+2. Code-behind model -- Two files namely xxxxx.aspx and xxxxx.aspx.cs will be created to save "Markup" into .aspx and code in .aspx.cs file.
+
+
+  Code-behind model is supported by the VS so you have to use "code-  inline" if you are not using VS.
+
+
+
+
+
+

@@ -1,0 +1,224 @@
+Collection Framework
+=====================================================================
+
+Collection refers the group or collection of elements (ints, float or string or objects...).
+Arrays are also example of "collections" however array cannot support arbitry deletion and insertion. The collection framework address the data-structure algorithms and through which we can collect data in different terms -- linked list, graph (map), stack, queue etc.
+
+In .net framework we have two types of collections:
+
+ 1. System.Collections  -- Non-generic collection. They contains closed                            types. All closed types uses "Object" as a                            parameter to box (cast) the elements.
+
+
+   For example:
+
+    The System.Collections.ArrayList class can store any kind of data.
+
+            ArrayList cities = new ArrayList();
+            cities.Add(10);
+            cities.Add(new Program());
+            cities.Add("Meh");
+
+            String name = cities[2]; //Error -- It returns Object so
+				     // we need to cast it
+
+            String name = cities[2] as String;
+
+2. System.Collections.Generic -- All data-structure classes designed using "generics" and hence they are opened. Open types receive different datatypes.
+
+ For example:
+
+   The System.Collections.Generic.List<T> class represent data of the    type that you've passed to it.
+
+            List<string> cities1 = new List<string>();
+            cities1.Add("Meh");
+            cities1.Add(10);   //Error: type parameter is 'string'
+
+            string name = cities[0];  //OK
+
+
+Important
+=========
+
+  Never use "Closed" collection types because we need to cast each   time.
+
+  There is no type restriction there to prevent improper data to be   inserted.
+
+
+How "Collection" type is defined? --- Architecture of Collection Framework.
+---------------------------------------------------------------------
+In .net framework collection framework is not limited to the System.Collections namespace. You/we can also designed our own collections types by implementing or extending interfaces or classes from System.Collections and System.Collections.Generic namespace.
+
+
+  First of all you have to define an implementation of IEnumerable or   IEnumerable<T>.
+   It means any collection type is an "IEnumerable".
+
+ For example : string , arrays are example of collection.
+
+  Every collection (IEnumerable) type must have 
+
+      IEnumerator GetEnumerator() method.
+
+   The IEnumerator object serve the purpose of collection traverse or    iterate or visit.
+
+   IEnumerator interface has three methods -- Current, MoveNext and    Reset().
+
+   foreach loop traverse the collection by calling methods of    "IEnumerator" implicitly.
+
+ For example:
+
+             string name = "Hello";
+            int[] nos = { 22, 33, 44, 55, 66 };
+
+            IEnumerator i = name.GetEnumerator();
+            while (i.MoveNext())
+            {
+                Console.WriteLine(i.Current);
+            }
+
+            i = nos.GetEnumerator();
+            while (i.MoveNext())
+            {
+                Console.WriteLine(i.Current);
+            }
+
+            foreach (var c in name)
+            {
+                Console.WriteLine(c);
+            }
+
+            foreach (var c in nos)
+            {
+                Console.WriteLine(c);
+            }
+
+
+Example: Program to design the custom "collection". (Implement the IEnumerable interface).
+
+
+namespace CollectionExample
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Test t = new Test();
+            foreach (var a in t)
+            {
+                Console.WriteLine(a);
+            }
+            IEnumerator i = t.GetEnumerator();
+
+            while (i.MoveNext())
+            {
+                Console.WriteLine(i.Current);
+            }
+
+
+        }
+    }
+}
+
+class Test : System.Collections.IEnumerable
+{
+    string[] data = { "App", "Bpp", "Cpp", "dpp" };
+    public IEnumerator GetEnumerator()
+    {
+        return new Hi(data);
+    }
+    class Hi : IEnumerator
+    {
+        int index = -1;
+        string[] data;
+
+        public Hi(string[] data)
+        {
+            this.data = data;
+        }
+
+        public object Current
+        {
+            get { return data[index]; }
+        }
+
+        public bool MoveNext()
+        {
+            index++;
+            if (index < data.Length)
+                return true;
+            return false;
+        }
+
+        public void Reset()
+        {
+            index = -1;
+        }
+    }
+}
+
+
+Object Browser Tool
+===================================================================
+In View Menu + Object Browser tool help us to understand the TYPES system of .net framework.
+
+
+
+yield keyword
+==================================================================
+
+  yield keyword push or insert an element into anonymous collection. This is the simplest way to create collection object of custom type.
+
+
+namespace CollectionExample
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            foreach (var t in MyNumbers())
+            {
+                Console.WriteLine(t);
+            }
+
+            var nos = MyNumbers();
+            foreach (var t in nos)
+                Console.WriteLine(t);
+        }
+
+        static IEnumerable<int> MyNumbers()
+        {
+            yield return 100;
+            yield return 200;
+            yield return 300;
+            yield return 400;
+        }
+    }
+}
+
+namespace CollectionExample
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int[] nos = { 33, 44, 55, 6, 7, 8, 9 };
+            var squares = nos.Square();
+            foreach (var t in squares)
+            {
+                Console.WriteLine(t);
+            }
+        }
+
+        
+    }
+}
+public static class MyExtension
+{
+    public static IEnumerable<double> Square(this IEnumerable<int> nos)
+    {
+        foreach (var n in nos)
+        {
+            if(n%2==0)
+              yield return n * n;
+        }
+    }
+}

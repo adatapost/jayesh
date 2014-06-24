@@ -1,0 +1,217 @@
+Focus -- To set cursor at input element
+==================================================================
+
+1. Set focus on control when we-browser display a page.
+
+   Open the source view of .aspx and add,
+
+     <form runat="server" defaultfocus="TextBox1" ...>
+
+2. Set focus programatically,
+
+   Use controlId.Focus() in event of buttons or something like it.
+
+3. Set AccessKey property (but it browser specific) of input control and at web-browser press Alt + key (single letter or digit)
+
+Default Button
+------------------------------------------------------------------
+It is a button whose click event will be raised when we press enter on non-button control. (Most probably the first button will be the default button).
+
+
+To change this scinario, add Panel control and set DefaultButton property with the ID of Button which you want to set as 'default button'.
+
+<asp:Panel id="panel1" runat="server" DefaultButton="button2">
+   ....
+   <asp:Button id="button1" runat="server" Text="Add"/>
+   <asp:Button id="button2" runat="server" Text="Del"/>
+   <asp:Button id="button1" runat="server" Text="Update"/>
+</asp:Panel>
+
+
+Types of submit buttons
+================================================================
+We have three button controls -- all these postback (submit) data.
+
+1. Button (Submit button)
+2. LinkButton (HperLink + JavaScript code)
+3. ImageButton (Image button)
+
+All three buttons have Click and Command event. Click event perform basic clicking operations and it will be executed before the execution "Command" event.
+
+Command Event will be executed after the click with additional data - these data are event-specific or control specific.
+
+
+Example:
+
+  1. Add Button1, ImageButton1 and LinkButton1 and set Button1.Text, ImageButton.ImageUrl, LinkButton1.Text.
+
+  2. Double click on each control to add Click event.
+
+  3. Code behind:
+
+protected void Button1_Click(object sender, EventArgs e)
+    {
+        Label1.Text = "Button";
+    }
+    protected void ImageButton1_Click(object sender, ImageClickEventArgs e)
+    {
+        Label1.Text = "ImageButton";
+    }
+    protected void LinkButton1_Click(object sender, EventArgs e)
+    {
+        Label1.Text = "LinkButton";
+    }
+
+
+Add events in ASP.NET code-behind
+===================================================================
+There are several ways to attach/add events:
+
+  1. Double clicking (Most probably default event . For example - Click      is default event of Button, TextChanged event of TextBox etc...)
+  
+  2. Open Properties Windows + Select Event icon ( Lightning Icon) and double click on event name or type event-handler name by hand.
+
+  3. Attach event programatically,
+
+     In page_load()
+  
+   protected void Page_Load(object sender, EventArgs e)
+    {
+        Button1.Click += test;  //Use Tab key to auto-insert-code
+    }
+
+    void test(object sender, EventArgs e)
+    {
+        throw new NotImplementedException();
+    }
+
+  OR use anonymous function (Lambda expression)
+
+     Button1.Click += (sa, ea) => 
+        {
+
+        };
+
+ 4. Using declarative way:
+
+     1. Open source view and type event handler by hand.
+
+  <asp:Button ID="Button2" 
+       runat="server" 
+       OnClick="Button2_Click" 
+       Text="Button" />
+
+
+
+Creating Controls Dynamically
+===============================================================
+ASP.NET Control is a class and we need to instantiate it,and append/insert into the existing page control heirarchy.
+
+
+ASP.NET Intorduce a special control called "PlaceHolder" which is used as "placeholder" for dynamically added controls.
+
+
+
+
+1. Markup in .aspx
+
+<h1>First</h1>
+<asp:PlaceHolder ID="PlaceHolder1" runat="server"></asp:PlaceHolder>
+<h1>SEcond</h1>
+<asp:PlaceHolder ID="PlaceHolder2" runat="server"></asp:PlaceHolder>
+<asp:Label ID="Label1" runat="server" Text="Label"></asp:Label>
+
+
+2. Code in .cs file
+
+protected void Page_Load(object sender, EventArgs e)
+    {
+        Button b1 = new Button()
+        {
+            Text = "OK"
+        };
+        Button b2 = new Button()
+        {
+            Text = "Cancel"
+        };
+
+        PlaceHolder1.Controls.Add(b1);
+        PlaceHolder1.Controls.Add(b2);
+
+
+        for (int i = 1; i < 5; i++)
+        {
+            LinkButton link = new LinkButton();
+            link.Text = "MyLink" + i;
+            link.CommandArgument = i.ToString();
+            link.CommandName = "Show " + i;
+            PlaceHolder2.Controls.Add(link);
+            link.Command += (sa, ea) =>
+                {
+
+                    Label1.Text = "Link button " + ea.CommandArgument + " " + ea.CommandName;
+                };
+        }
+    }
+
+
+Command Event
+=============
+Command Event passes event specific data of button/linkbutton/imagebutton to the handler. Only you need to set "CommandArgument" or "CommandName" or "both".
+
+
+
+Transfer user from one page to another page (Navigate pages)
+======================================================================
+
+ASP.NET has number of ways to navigate across the pages and websites.
+
+1. HyperLink control
+
+    Set Text and NAvigateUrl property
+
+
+2. Cross-page postback 
+
+    When we submit a form, a submitted data will be received by other     form (page) (other)rather than same form.
+
+    You need to set PostBackUrl = "file" property of     Button/ImageButton/LinkButton and don't handle click event.
+
+3. Response.Redirect("Url") -- via Code behind
+
+
+  You can call Response.Redirect("url") in code file. This method sends "url" to the web-browser and web-browser will request it. In fact it is nothing but an instruction for the web-browser.
+
+
+4. Server.Transfer(".aspx_page_of_current_app")
+
+  This method request another .aspx page. In this case a program  can   request another program and so on.
+
+The ~ (Root) Operator
+=============================================================
+ASP.NET server control uses ~ root operator to specify the root directory of current web app.
+
+~ <-- Root of webapp.
+
+Server.MapPath("~/../") -- It returns absolute/physical path of given file, folder.
+
+Example:
+
+        Label1.Text = Server.MapPath("~");
+
+        string virtualPath = "~/web.config";
+        string realPath = Server.MapPath(virtualPath);
+        Label2.Text = realPath;
+
+        var vFile = "~/Sample/Hello.txt";
+        var rFile = Server.MapPath(vFile);
+
+        System.IO.File.AppendAllText(rFile, "Hello World");
+
+
+
+
+
+
+
+

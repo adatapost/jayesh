@@ -1,0 +1,123 @@
+The .net framework
+===================================================================
+
+It is a software or programming environment that is used to develop, deploy and execute applications in highly-distributed environment of the Internet (Networking).
+
+
+The .net framework is a set of services which are started with operating system's services and these services are used or exposed in form of system-level (low-level) and abstracted level (high level) classes/types/datatypes.
+
+
+[NOTE: All different frameworks designed using IOC concepts].
+
+How the .net framework is constituted or formed?
+--------------------------------------------------
+
+The .net framework rely upon three major components or you can say that three comopnents that constitute the .net framework are:
+
+1. CLI - Common Language Infrastructure
+2. CTS - Common Types System
+3. CLR - Common Language Runtime
+
+
+CLI
+====
+
+CLI is guideline for the people who wants to use the .net framework. In fact, the CTS and CLR are designed as per CLI so we need to understand the purpose of CLI before we learn the CTS and CLR.
+
+CLI defines different specifications so the language vendor, library writer and software developer can understand how things in .net framework are designed/wired.
+
+For example: Anybody can create his/her own version of C# language by implementing standards from "C# Language specification" and "Common Language Specification".
+
+             Anybody can create CLR or CTS from the scratch based upon the CLI guideline.
+
+   For example:  CLR/CTS for Window Platform is developed by Microsoft
+                 whereas, CLR/CTS for linux/mac are developed by
+		 open-source community (It is called "Mono").
+
+CTS
+====
+
+It is TYPES system which expose the functionalities from .net framework services. The CTS contains varities of datatypes that you can use them in your program of CLS-compatible language.
+
+NOTE: CLS-compatible means a programming language designed using       CLI/CLS standards.
+
+VB.NET, C#, F#, PHP, Cobol, Python, Ruby and many more languages conforms the CLS.
+
+
+The CTS types falls into two groups:
+
+  1. Base or core APIs or TYPES
+
+     These group of classes/types are essiential for any kind of application. We cannot create a single program without the help of core API.
+
+     These APIs are: Input & Output (I/O), Primitive Types (int,char etc), Strings, Threading, Globalization, Debugging APIs, Runtime & Reflection API, Text encoding, Network APIs and so on.
+
+
+  2. Extended APIs Or classes
+
+     These APIs uses core-APIs to develop the application specific      APIs.                      
+   
+     For example:
+
+          WinForm - for windows/desktop application
+          ASP.NET - for web app
+          WPF - Windows Presentation Framework for desktop & mobile app
+          WCF - Windows Communication Framework for networking & 		remoting
+          ADO.NET - for database integration
+          XML.NET - for XML parsers and
+          Collection Framework, LINQ, EDM and so on.
+
+What language used to develop CTS?
+===================================
+ The MSIL - Microsoft Intermediate Language (IL) obviously along with  VC++.
+
+ The IL is "common" language. It means any program you will write in C#/VB language will be converted into MSIL by C# and VB compilers.
+
+
+  C# Program ==> C# compiler ===> Produce MSIL code and store
+  (sample.cs)			  into sample.exe or sample.dll
+
+  VB.NET program=> VB Compiler =>  -- Do --
+   (sample.vb				
+
+
+The file (.exe or .dll) which contains IL code is called ".net assembly". The exe stands for executable and it must have "Main - Entry point method".
+            The DLL stands for Dynamic Link Library which does not have
+            Main method.
+
+
+
+CLR
+====
+
+It it rich runtime environment which prepare a program (assembly) for the execution. The CLR does number of runtime task on behalf of the developer including loading of TYPES from the disk or network, verfying loaded types, converting loaded type's MSIL into Native (OS) code, manages memory and so on.
+
+
+CLR is not a single program but it is stack of services which prepare program for the execution and these CLR services are:
+
+1. Loading types -- It determines the dependencies and load classes                     from local or remote location.
+
+2. Verfying code -- The code verifier service verifies the IL syntax and it founds IL instruction melfunction then stops the further execution.
+
+3. MSIL to Native conversion - In order to run the IL code, we must have to convert all IL instructions to Native instructions with the help of :
+
+    1. Native code generator (ngen.exe) -- Which convert all IL        instructions to Native at a time.
+    2. Just-In-Time compiler -- It is higly optimized compiler which convert those IL instructions which are really used/needed by the application.
+
+4. Type sefty verification service verify the data's type at the execution time to prevent further destruction.
+  
+    [Note: Type sefty stage is at both compile and runtime of an app].
+
+5. Memory Manager and Garbage collector services -- The "Memory Managers" allocate memory as needed and the "GC - Garbage collector" release those memory areas (heap) which are no longer needed by the application.
+
+6. Exception Handling - This service is responsible to obtain error/exception trace and log them for the developer.
+
+7. Threading and concurrency - This service is responsible to execute code asynchroniously.
+
+8. Version and co-instance execution service ensure that the appropriate versions of TYPEs begin used by the application.
+
+9. COM-InterOp - Component Object Model is a software component developer using VC++ and CLR cannot manages "COM" so COM-Interoperability service execute the "COM" components. Excel, Word, MediaPlayer and other software developed using VC++ and hence not managed directly by the CLR.
+
+
+
+

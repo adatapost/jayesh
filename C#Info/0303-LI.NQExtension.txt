@@ -1,0 +1,209 @@
+LINQ Extension Methods (System.Linq)
+=================================================================
+
+ Extension methods associated with IEnumerable are located under  System.Linq namespace and allow us an alternative way to construct the  LINQ.
+
+ 1. Where ( lambda_expression)
+     
+    var result = emps.Where(x => x.Salary >= 4000 
+                      && x.Salary <= 10000).ToList();
+
+   is equivalent to,
+
+
+       var result = (from e in emps
+                          where e.Salary >= 4000 && e.Salary <= 10000
+                          select e).ToList();
+
+    Where() method take Func<T> delegate type.
+
+Example:
+ Assume that we've Emp class and List<Emp> collection:
+
+ For example,
+
+public class Emp
+    {
+        public string Name { get; set; }
+        public string Dept { get; set; }
+        public double Salary { get; set; }
+    }
+
+and collection of Emp:
+
+   List<Emp> emps = new List<Emp>()
+            {
+                new Emp(){ Dept="Acc", Name="A1", Salary=9000},
+                new Emp(){ Dept="Acc", Name="A2", Salary=1000},
+                new Emp(){ Dept="Mkt", Name="M3", Salary=2000},
+                new Emp(){ Dept="Mkt", Name="M2", Salary=3000},
+                new Emp(){ Dept="Acc", Name="A3", Salary=4000},
+            };
+
+
+  var result = emps.Where(x => x.Salary >= 4000 
+                && x.Salary <= 10000).ToList();
+             
+  foreach (var e in result)
+   {
+    Console.WriteLine(e.Name + " " + e.Dept + " " + e.Salary);
+    }
+
+ 2. Select( lambda_expression) - To select element.
+
+
+    Select() function returns a collection of anonymous object:
+
+        var result = emps.Where(x => x.Salary
+                >= 4000 && x.Salary <= 10000).Select(x => new {
+                  Name = x.Name,
+                  Dept = x.Dept,
+                  BasicSalary = x.Salary,
+                  DA = x.Salary * .60
+                });
+             
+            foreach (var e in result)
+            {
+                Console.WriteLine(e.Name + " " + e.Dept + " " 
+                 + e.BasicSalary + " " + e.DA);
+            }
+
+  Example: List<String> -- returns names only
+
+           var result = emps.Select(x => x.Name);
+             
+            foreach (var e in result)
+            {
+                Console.WriteLine(e);
+            }
+
+
+ You can define anonymous method seperately like this:
+
+            //Anonymous functions
+            Func<Emp,string> selectName = x=>x.Name;
+            Func<Emp, bool> above4000 = x => {
+                if (x.Salary >= 4000)
+                    return true;
+                return false;
+            };
+
+            //Pass anonymous function to Select or Where method
+            var result = emps.Select(selectName);
+             
+            foreach (var e in result)
+            {
+                Console.WriteLine(e);
+            }
+            foreach (var e in emps.Where(above4000))
+            {
+                Console.WriteLine(e.Name + " " + e.Salary);
+            }
+
+
+3. First() -- It returns first element from the sequence if it is    exists. Throws exception otherwise.
+
+            string name = "M31";
+
+            var emp = emps.Where(x => x.Name == name).First();
+
+            Console.WriteLine(emp.Name + " " + emp.Dept + " " 
+                          + emp.Salary);
+
+4. FirstOrDefault() - It returns first element from the sequence if it is exists. Returns null otherwise (Default value  -- null).
+ 
+
+            string name = "M3";
+
+            var emp = emps.Where(x => x.Name == name).FirstOrDefault();
+            if (emp != null)
+                Console.WriteLine(emp.Name + " " + emp.Dept + " "
+                      + emp.Salary);
+            else
+                Console.WriteLine("Not found");
+
+
+5. Skip(int n) -- It skip "n" elements and returns list.
+6. Take(int n) -- It returns "n" elements from begining.
+
+Example:
+
+           var result = emps.Take(2).ToList();
+            foreach (var e in result)
+            {
+                Console.WriteLine(e.Name + " " + e.Dept);
+            }
+            Console.WriteLine("=============");
+            result = emps.Skip(2).Take(2).ToList();
+            foreach (var e in result)
+            {
+                Console.WriteLine(e.Name + " " + e.Dept);
+            }
+            Console.WriteLine("=============");
+            result = emps.Skip(4).Take(2).ToList();
+            foreach (var e in result)
+            {
+                Console.WriteLine(e.Name + " " + e.Dept);
+            }
+
+7. Max,Min, Sum 
+
+
+var result =  emps.Sum(x => x.Salary);
+Console.WriteLine(result);
+
+result = emps.Where(x => x.Dept == "Acc").Sum(x =>  x.Salary);
+Console.WriteLine(result);
+
+result = emps.Where(x => x.Dept == "Acc").Max(x => salary);
+Console.WriteLine(result);
+
+
+8. OrderBy and OrderByDescending
+
+            var result = emps.OrderBy(x => x.Name).ToList();
+            foreach (var e in result)
+                Console.WriteLine(e.Name + " " + e.Dept);
+            result = emps.OrderByDescending(x => x.Name).ToList();
+            foreach (var e in result)
+                Console.WriteLine(e.Name + " " + e.Dept);
+
+
+
+9. Distinct() -- Return unique objects
+
+           var result = emps.Select(emp => emp.Dept).Distinct();
+
+            foreach (var dept in result)
+                Console.WriteLine(dept);
+
+10. GroupBy -- Returns Dictionary object containing the Key and List.
+
+           var group = emps.GroupBy(x => x.Dept);
+
+            foreach (var dept in group)
+            {
+                Console.WriteLine(dept.Key);
+                foreach (var e in dept)
+                {
+                    Console.WriteLine("\t\t" + e.Name + " " + e.Salary);
+                }
+            }
+
+11. Count() -- Returns count of element.
+
+
+            var total = emps.Count(x => x.Salary >= 4000);
+            Console.WriteLine(total);
+            Console.WriteLine(emps.Count());
+
+
+
+Predicate Delegate
+==================
+Func<ArgumentType,ReturnType> - It is predefined delegate that takes two type references -- first will be argument (in) type and second will be "out" or return type.
+
+  Func<Emp,string> predicateNames = x=>x.Name;
+  Func<Emp,int> predicateIds = x=>x.EmpID;
+  Func<Emp,bool> above50 = x=>x.EmpID>=50;
+

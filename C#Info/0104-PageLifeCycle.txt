@@ -1,0 +1,173 @@
+ASP.NET Page and Control Life Cycle
+=====================================================================
+
+When we request a webform (.aspx), at server-side, the ASP.NET process the .aspx (webform) into several stages or phases and each phase or stage known as Page lifecycle stage/phase.
+
+Each stage perform different action in specific order. These stages are:
+
+1. Page framework initialization
+
+2. User code initialation / User code Loading   
+
+3. Validation 
+
+4. User events - click, changed,selection events
+
+5. Data binding 
+
+6. Pre-render stage -- In this stage "render" method of page & controls
+			will be called.
+
+7. Clean up / unloading
+
+
+Page/Control Framework Initialization
+--------------------------------------
+In this phase, ASP.NET creates an object of Page class (e.g Sample.aspx -- Sample_aspx class object).
+
+After that it create objects of Controls with default value.
+
+Once page and control objects are created the ASP.NET reads "ViewState" collection to populate newly created controls with previous/old values of Controls proeprties when page is posted back (submit). IF page is requested first time there isn't a "ViewState".
+
+
+Note: Each control and page has special property called "EnabledViewState" that is always turn on by default so you can turn off the viewstate if required.
+
+
+In Initialization stage we can:
+
+   1. change master page
+   2. change culture - country, language and resources
+   3. change themes
+
+If you are initerested to handle your activities into this stage then add Page_Init() event:
+
+   public void page_init()
+    {
+
+     }
+
+ In this stage we do not have to access the control properties also we  should not have to change them.
+
+
+2. User code initialization or Loading stage
+
+   This is the stage in which user can recevie value from controls    proeprties and also set new properties.
+
+Example:
+
+1. Page1.aspx
+   -----------
+   TextBox1 Button1 <--- On click incr wont be finished
+
+2. Add following in code-behind
+
+
+   public void Page_load()
+    {
+
+    }
+    public void page_init()
+    {
+        int n;
+        int.TryParse(TextBox1.Text, out n);
+        n++;
+        TextBox1.Text = n.ToString();
+    }
+
+
+And move page_init() code to page_load() and see what happen.
+  public void Page_init()
+    {
+
+    }
+    public void page_load()
+    {
+        int n;
+        int.TryParse(TextBox1.Text, out n);
+        n++;
+        TextBox1.Text = n.ToString();
+    } 
+
+
+ In page_load event, you can use Page.IsPostBack boolean property to determine whether a page is requested first time or not.
+
+  For example:
+
+    public void page_load()
+    {
+       if(!IsPostBack) 
+        {
+           //First request....
+        }
+       else 
+         {
+           //Subsequent request
+         }
+     }
+
+  Why this comparision is necessary?
+
+  Because of "ViewState".
+
+  Each control persists their properties data into "ViewState" till a   page is not closed or a new page is requested. So we do not want to load or set controls proeprties again and again because these data are already exist into ViewState.
+
+  
+  What is ViewState?
+  ==================
+
+  The ViewState is dictionary object which persists key-value pairs of   changed properties of controls in a page. Every changed properties of controls and page are stored into ViewState object (Whose class name is StateBag) and at the "Pre-render" stage the ASP.NET serialize (convert to string) the "ViewState" object and add   it into currently requested page with <input type="hidden" name="VIEWSTATE" value="serialize"/>
+
+
+3. Validation Stage
+
+   In this stage, input validation are performed.
+
+4. Control events -- Click, Change, Selection
+
+   In this stage control events are handled.
+
+5. DataBind stage
+   This stage assign data to the control properties using "Data-   Binding" mechanism.
+
+6. Pre-render stage -- This is the last stage in PageLife cycle through which you can add html markup. After this page unload or clean up phase will be started.
+
+7. Clean up stage -- This stage perform page-specific clean up.
+
+
+
+Tracing the Page
+=======================================================================
+Trace is a tool which produce page-processing stages information and write them into web-page.
+
+To enable the Trace tool,  add Trace="True" in Page Directive.
+
+ <%@Page Language="C#" Trace="True" ..%>
+
+You can use Trace.Write("message") method to include user-define message with trace output.
+
+Example:
+
+1. Add Page1.aspx
+   Add some controls 
+
+    TextBox1, Button1,
+2. Handle events (double click on control) and write 
+
+    Trace.Write("Button1 is clicked");    
+
+3.  And add page_events:
+
+protected void Page_Load(object sender, EventArgs e)
+    {
+        Trace.Write("Load");
+    }
+    public void page_init()
+    {
+        Trace.Write("Init");
+    }
+    public void page_prerender()
+    {
+        Trace.Write("PreRender");
+    }
+
+

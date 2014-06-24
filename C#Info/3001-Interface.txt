@@ -1,0 +1,223 @@
+Interface
+=====================================================================
+
+In C language, we should have to create prototype or declaration of function before we define it.
+
+But it is mandatory when we need to create function pointer to store reference of functions.
+
+In OO languages the interface keyword (in C++  it is class keyword to define class and interface) is used to define interface and interface contains function/method declarations. In fact interface is reference type that contains "behavior".
+
+   Each object has Identity (class)
+   Each object has number of behaviors.(Interfaces)
+
+There must be a one and only one super class.
+
+There can be possibilities to create an interface from different interfaces. It means an interface can inherits multiple interfaces.
+
+Example:
+
+interface User
+{
+   void Show();  <--- Function pointer
+}
+
+interface Clerk : User <-- Inherits
+{
+  void Add();
+}
+
+interface Admin : Clerk
+{
+  void Del();
+  void Update();
+}
+
+Above code re-use the declarations defined in User and Clerk interfaces.
+
+Between two classes, a relationship is called "Inheritance".
+Betweem twp or more interfaces, a relationship is called "Inheritance".
+Between a class and one or more interfaces, a relationship is called "Implementation Relationship".
+
+class First : User
+{
+    public void Show() {} // Implementation of User
+}
+
+class Second : Clerk
+{
+    public void Show() {} // Implementation of User & Clerk
+    public void Add() {} // Implementation of Clerk
+}
+
+class Third : Admin
+{
+    public void Show() {} // Implementation of User & Clerk & Adin
+    public void Add() {} // Implementation of Clerk & Admin
+    public void Del() {} // Implementation of   Admin
+    public void Update() {} // Implementation of   Admin
+}
+
+What are the applications of Interfaces?
+========================================
+
+1. To define the standard behavior (Set of function declaration)
+
+2. To define closure or function pointer
+
+3. To define events
+   
+
+Access modifier of interface members
+=========================================================
+All members in interface are public and we cannot change access.
+
+
+public interface Test
+{
+    void One();
+    void Two();
+}
+public interface Best
+{
+    void Three();
+}
+ public class TestImpl : Test, Best
+{
+
+    public void One()
+    {
+        Console.WriteLine("One");
+    }
+
+    public void Two()
+    {
+        Console.WriteLine("Two");
+    }
+
+    public void Three()
+    {
+        Console.WriteLine("Three");
+    }
+    public void Four()
+    {
+        Console.WriteLine("Four");
+    }
+}
+class MainApp
+{
+    static void Main()
+    {
+        TestImpl a = new TestImpl();
+        a.One();
+        a.Two();
+        a.Three();
+        a.Four();
+        Test t = a; //Assign method references - One() & Two()
+        Best b = a; //Assign method reference - Three()
+
+
+        t.One();
+        t.Two();
+
+        b.Three();
+    }
+}
+
+
+
+Hides the implementation of interfaces
+=============================================================
+In C# it is possible to write "private" implementation of "interfaces".
+
+The "Explicit" interface implementation hiden by the class itself because these methods do not use "access" modifier.
+
+Example:
+
+public interface Test
+{
+    void One();
+    void Two();
+}
+public interface Best
+{
+    void Three();
+}
+ public class TestImpl : Test, Best
+{
+
+
+    void Test.One()
+    {
+        Console.WriteLine("One");
+    }
+
+    void Test.Two()
+    {
+        Console.WriteLine("Two");
+    }
+
+    void Best.Three()
+    {
+        Console.WriteLine("Three");
+    }
+    public void Four()
+    {
+        Console.WriteLine("Four");
+        
+    }
+}
+class MainApp
+{
+    static void Main()
+    {
+        TestImpl a = new TestImpl();
+       
+        Test t = a; //Assign method references - One() & Two()
+        Best b = a; //Assign method reference - Three()
+
+
+        t.One();
+        t.Two();
+
+        b.Three();
+    }
+}
+
+Explicit interface members are not accessed by the class object's reference variable but we need to use "Interface" refererence variable instead.
+
+
+Example:
+
+public interface Printer
+{
+    void Print();
+}
+public interface Screen
+{
+    void Print();
+}
+public class TestImpl :  Printer, Screen
+{
+    void Printer.Print()
+    {
+        Console.WriteLine("Printer's Print");
+    }
+
+    void Screen.Print()
+    {
+        Console.WriteLine("Screen's Print");
+    }
+}
+class MainApp
+{
+    static void Main()
+    {
+        TestImpl a = new TestImpl();
+
+        Printer p = a;
+        Screen s = a;
+
+        p.Print();
+        s.Print();
+    }
+}

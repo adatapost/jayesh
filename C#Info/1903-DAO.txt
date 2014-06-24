@@ -1,0 +1,305 @@
+Data Access Object Layers
+====================================================================
+
+With Databases and ADO.NET, we need to create "abstraction" to seperate Database code and data code or business code.
+
+For example, Assume that we have table namely - Emp with EmpNo, EmpName and JoinDate columns.
+
+1. Firstly create a model class [Use proper namespaces]
+
+namespace Payroll.Model
+{
+
+public class Emp
+{
+  public int EmpNo {get;set;}
+  public string EmpName {get;set;}
+  public DateTime JoinDate {get;set;}
+}
+
+}
+
+ [CREATE a Project Named "Payroll". Create "Model" folder in it and add   "Emp.cs" into "Model" folder]
+
+2. Create Main.cs to store commonly used static properties/data.
+
+namespace Payroll.Util
+{
+    public class Main
+    {
+        public const string CNSTR = @"Data Source=(LocalDB)\v11.0;AttachDbFilename=c:\csnet\Jayesh\Payroll\Payroll\PayrollDb.mdf;Integrated Security=True";
+    }
+}
+
+3. Create EmpDao.cs
+
+
+namespace Payroll.Dao
+{
+    public class EmpDao
+    {
+        public static  bool Add(Payroll.Model.Emp emp)
+        {
+            using (SqlConnection cn = new SqlConnection())
+            {
+                using(SqlCommand cmd=new SqlCommand())
+                {
+                    cn.ConnectionString = Payroll.Util.Main.CNSTR;
+                    cmd.Connection = cn;
+                    cmd.CommandText = "insert into emp values (@empNo,@empName,@joinDate)";
+                    cmd.Parameters.AddWithValue("@empNo", emp.EmpNo);
+                    cmd.Parameters.AddWithValue("@empName", emp.EmpName);
+                    cmd.Parameters.AddWithValue("@joinDate", emp.JoinDate);
+
+                    cn.Open();
+                    cmd.ExecuteNonQuery();
+                    cn.Close();
+                    return true;
+                }
+            }
+        }
+        public static bool Delete(Payroll.Model.Emp emp)
+        {
+            using (SqlConnection cn = new SqlConnection())
+            {
+                using (SqlCommand cmd = new SqlCommand())
+                {
+                    cn.ConnectionString = Payroll.Util.Main.CNSTR;
+                    cmd.Connection = cn;
+                    cmd.CommandText = "delete from  emp where empNo=@empNo";
+                    cmd.Parameters.AddWithValue("@empNo", emp.EmpNo);
+                    cn.Open();
+                    cmd.ExecuteNonQuery();
+                    cn.Close();
+                    return true;
+                }
+            }
+        }
+        public static bool Update(Payroll.Model.Emp emp)
+        {
+            using (SqlConnection cn = new SqlConnection())
+            {
+                using (SqlCommand cmd = new SqlCommand())
+                {
+                    cn.ConnectionString = Payroll.Util.Main.CNSTR;
+                    cmd.Connection = cn;
+                    cmd.CommandText = "update emp set empName=@empName,joindate=@joinDate where empNo=@empNo";
+                    cmd.Parameters.AddWithValue("@empNo", emp.EmpNo);
+                    cmd.Parameters.AddWithValue("@empName", emp.EmpName);
+                    cmd.Parameters.AddWithValue("@joinDate", emp.JoinDate);
+
+                    cn.Open();
+                    cmd.ExecuteNonQuery();
+                    cn.Close();
+                    return true;
+                }
+            }
+        }
+        public static bool Find(Payroll.Model.Emp emp)
+        {
+            using (SqlConnection cn = new SqlConnection())
+            {
+                using (SqlCommand cmd = new SqlCommand())
+                {
+                    cn.ConnectionString = Payroll.Util.Main.CNSTR;
+                    cmd.Connection = cn;
+                    cmd.CommandText = "select * from emp  where empNo=@empNo";
+                    cmd.Parameters.AddWithValue("@empNo", emp.EmpNo);
+
+                    cn.Open();
+                    using (var dr = cmd.ExecuteReader())
+                    {
+                        if (dr.Read())
+                        {
+                            emp.EmpName = dr.GetString(1);
+                            emp.JoinDate = dr.GetDateTime(2);
+                            return true;
+                        }
+                    }
+                    cn.Close();
+                    
+                }
+            }
+            return false;
+        }
+        public static List<Payroll.Model.Emp> Emps()
+        {
+            List<Payroll.Model.Emp> list = new List<Model.Emp>();
+            using (SqlConnection cn = new SqlConnection())
+            {
+                using (SqlCommand cmd = new SqlCommand())
+                {
+                    cn.ConnectionString = Payroll.Util.Main.CNSTR;
+                    cmd.Connection = cn;
+                    cmd.CommandText = "select * from emp";
+                    
+
+                    cn.Open();
+                    using (var dr = cmd.ExecuteReader())
+                    {
+                        while (dr.Read())
+                        {
+                            Payroll.Model.Emp emp = new Model.Emp();
+                            emp.EmpNo = dr.GetInt32(0);
+                            emp.EmpName = dr.GetString(1);
+                            emp.JoinDate = dr.GetDateTime(2);
+                            list.Add(emp);
+                        }
+                    }
+                    cn.Close();
+                }
+            }
+            return list;
+        }
+
+    }
+}
+
+Test the EmpDao
+============================
+
+Test-1
+========
+
+          Emp emp = new Emp()
+            {
+                 EmpNo=11, EmpName="Manish", JoinDate=DateTime.Now
+            };
+            
+          /*  if ( !EmpDao.Find(emp) && EmpDao.Add(emp))
+                Console.WriteLine("Added");
+            else
+                Console.WriteLine("Cannot add");
+            */
+            if (!EmpDao.Find(emp))
+            {
+                if (EmpDao.Add(emp))
+                    Console.WriteLine("Added");
+            }
+            else
+                Console.WriteLine("Cannot add");
+
+Test-2
+=======
+
+Search by EmpNo
+
+
+static void Main(string[] args)
+        {
+            Emp emp = new Emp()
+            {
+                EmpNo = 112
+            };
+            if (EmpDao.Find(emp))
+            {
+                Console.WriteLine(emp.EmpNo + " " + emp.EmpName + " " + emp.JoinDate);
+            }
+            else
+            {
+                Console.WriteLine("Not found");
+            }
+        }
+
+
+Test-3
+======
+Update record
+
+static void Main(string[] args)
+        {
+            Emp emp = new Emp()
+            {
+                EmpNo = 11
+            };
+            if (EmpDao.Find(emp))
+            {
+                Console.WriteLine(emp.EmpNo + " " + emp.EmpName + " " + emp.JoinDate);
+
+                emp.EmpName = "Manish Singh";
+                EmpDao.Update(emp);
+            }
+            else
+            {
+                Console.WriteLine("Not found");
+            }
+        }
+
+Test-4
+=========
+Delete a record
+
+Emp emp = new Emp()
+            {
+                EmpNo = 11
+            };
+            if (EmpDao.Find(emp))
+            {
+                Console.WriteLine(emp.EmpNo + " " + emp.EmpName + " " + emp.JoinDate);
+                EmpDao.Delete(emp);
+            }
+            else
+            {
+                Console.WriteLine("Not found");
+            }
+
+Test-5
+======
+List emps
+
+static void Main(string[] args)
+        {
+            foreach (var emp in EmpDao.Emps())
+            {
+                Console.WriteLine(emp.EmpNo + " " + emp.EmpName + " since " + (DateTime.Now - emp.JoinDate).TotalDays);
+            }
+        }
+
+
+
+Ex:
+
+static void Main(string[] args)
+        {
+            foreach (var emp in EmpDao.Emps())
+            {
+                Console.WriteLine(emp.EmpNo + " " + emp.EmpName + " since " + (DateTime.Now - emp.JoinDate).Days + " days");
+            }
+        }
+
+
+Ex:
+static void Main(string[] args)
+        {
+            foreach (var emp in EmpDao.Emps().Where(x=>x.EmpName.StartsWith("M")))
+            {
+                Console.WriteLine(emp.EmpNo + " " + emp.EmpName + " since " + (DateTime.Now - emp.JoinDate).Days + " days");
+            }
+        }
+
+Ex:
+
+    static void Main(string[] args)
+        {
+            var query = from e in EmpDao.Emps()
+                        select new
+                        {
+                            Name = "Mr. " + e.EmpName ,
+                            Since = (DateTime.Now  - e.JoinDate).Days
+                        };
+
+            var emp = new
+            {
+                No=10,
+                Name="Mohan"
+            };
+
+            Console.WriteLine(emp.No + " " + emp.Name);
+
+            foreach (var e in query)
+            {
+                Console.WriteLine(e.Name + " is working with us since " + e.Since + " days");
+
+            }
+        }
+

@@ -1,0 +1,192 @@
+Directory and DirectoryInfo
+===================================================================
+Directory has static methods whereas DirectorInfo provide instance methods.
+
+1. Create/Delete or check the existance of directory
+
+        string _path = @"c:\csnet\hello";
+
+        if (Directory.Exists(_path))
+        {
+            Console.WriteLine("Directory Exists");
+            Directory.Delete(_path);
+        }
+        else
+        {
+            Directory.CreateDirectory(_path);
+        }
+
+2. List the directories of specified directory.
+
+        string _path = @"c:\csnet";
+
+        if (Directory.Exists(_path))
+        {
+            foreach (var f in Directory.EnumerateDirectories(_path))
+            {
+                Console.WriteLine(f);
+            }
+        }
+
+3. List the files of specified directory
+
+
+       string _path = @"c:\csnet";
+
+        if (Directory.Exists(_path))
+        {
+            
+            foreach (var f in Directory.GetFiles(_path))
+            {
+                Console.WriteLine(f);
+            }
+        }
+
+4. DirectoryInfo class methods return instances of DirectoryInfo or    FileInfo class.
+    
+   Enumeration of DirectoryInfo
+  ==============================
+
+        string _path = @"c:\csnet";
+        DirectoryInfo info = new DirectoryInfo(_path);
+        if (info.Exists)
+        {
+            foreach (var dInfo in info.EnumerateDirectories())
+            {
+                Console.WriteLine(dInfo.LastWriteTime + " " + dInfo.FullName);
+            }
+        }
+
+   Enumeration of FileInfo
+   ======================
+string _path = @"c:\csnet";
+        DirectoryInfo info = new DirectoryInfo(_path);
+        if (info.Exists)
+        {
+            foreach (var fileInfo in info.EnumerateFiles())
+            {
+                Console.WriteLine(fileInfo.FullName + " " + fileInfo.Length);
+            }
+        }
+
+
+DriveInfo class
+==============================================
+
+Static method DriveInfo.GetDrives() enumerate the total number of drives and its status.
+
+
+DriveInfo[] info = DriveInfo.GetDrives();
+foreach (var d in info)
+ {
+ if(d.IsReady)
+    Console.WriteLine(d.Name + " " + d.VolumeLabel 
+         + " Free space ("  + d.TotalFreeSpace 
+           + " out of " + d.TotalSize + ")");
+  }
+
+
+Stream Input & Output classes
+=====================================================================
+
+Stream means flow of data in form of "byte/bytes" -- To send bytes to one device to another device and vice-versa is called stream. Streams are very expensive (i.e. memory hungry) and that is the core reason to learn "Stream" properly.
+
+In C#/VB.NET, we must have to release or dipose the stream properly once we are done.
+
+The C#/VB.NET has  a keyword called "using" which ensure (gaurantee) that the disposable object must be released in normal case or in case of exception.
+
+ Syntax:
+  
+   using(ClassName refVar = .......)
+    {
+      //// statements
+    }
+
+  using block receive the class name whose implemented the IDiposable   interface.
+
+Example:  If you've a class where you need a cleanup even successfully execution or on exception then your class must implement the IDisposable interface .
+
+
+public class Hello : IDisposable
+{
+    public void Dispose()
+    {
+        Console.WriteLine("DONE!");
+    }
+}
+class Test
+{
+    static void Main()
+    {
+
+        using (Hello h = new Hello())
+        {
+            Console.WriteLine("Hi! I'm safe");
+        }
+
+    }
+}
+
+ We must have to use "using" block on:
+
+   1. Stream IO
+   2. ADO.NET -- database IO
+   3. Image Processing
+   4. Memory and Network IO
+
+Example: StreamWriter -- Write 'text' data into the stream.
+
+    using (var stream = new StreamWriter(@"c:\csnet\sample.txt", true))
+        {
+            stream.Write(10);
+            stream.WriteLine();
+            stream.WriteLine("This is the next line");
+            stream.WriteLine("10,20,40");
+        }
+
+Example: Read 'text' file
+
+     using (var stream = new StreamReader (@"c:\csnet\sample.txt"))
+        {
+            Console.WriteLine(stream.ReadToEnd());
+        }
+Example: Read 'text' file line by line
+
+using (var stream = new StreamReader (@"c:\csnet\sample.txt"))
+        {
+            string line=null;
+            while ((line = stream.ReadLine()) != null)
+            {
+                Console.WriteLine(line);
+            }
+        }
+
+
+BinaryWriter and BinaryReader classes
+===================================================================
+BinaryWriter object receive primitive or string data and breaks them into byte array and write them onto the device/stream.
+
+
+BinaryReader object read specified amount of bytes and re-engineer them to form a value.
+
+ using (FileStream file = new FileStream(@"c:\csnet\emp.txt", FileMode.Create))
+        {
+            using (var binary = new BinaryWriter(file))
+            {
+                binary.Write(10); // int
+                binary.Write(10.10); //double
+                binary.Write("Hello"); //string
+                binary.Write(10.10M); //decimal
+            }
+        }
+
+        using (FileStream file = new FileStream(@"c:\csnet\emp.txt", FileMode.Open))
+        {
+            using (var binary = new BinaryReader(file))
+            {
+                Console.WriteLine(binary.ReadInt32());
+                Console.WriteLine(binary.ReadDouble());
+                Console.WriteLine(binary.ReadString());
+                Console.WriteLine(binary.ReadDecimal());
+            }
+        }

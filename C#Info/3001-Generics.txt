@@ -1,0 +1,113 @@
+Generics OR Parameterized types
+=====================================================================
+The Generics or parameterized types is C# language's ability (or compiler specified feature) to pass reference of datatype to the methods or classes.
+
+The main use of Generics is to re-use the source code. For example suppose I want to create a Stack class to present integers.
+
+class Stack
+{
+    private int []items;
+    public void Push(int n){}
+    public int Pop(){}
+}
+
+ Now I want to store float data into Stack object but that is not possible because type specified in Stack is "int".
+
+class StackF
+{
+    private float []items;
+    public void Push(float n){}
+    public float Pop(){}
+}
+
+So we've to create a new class for each datatype that we want to store stack data.
+
+There is a solution of this issue is called "Generics".
+
+You can create clas with <Parameter> datatype:
+
+ class Stack<T>
+  {
+     private T []items;
+     public void Push(T n){}
+    public T Pop(){}
+  }
+
+
+  Stack<int> p=new Stack<int>();
+   Stack<string> s=new Stack<string>();
+
+General Syntax:
+
+  access_modifier class | interface ClassName<T1,T2,T3,...>
+   {
+   }
+
+ Type parameter should be written upperletter to avoid confusion.
+   
+   class Stack<no> {}  // valid
+   class Stack<T> {}   //valid and meaningful
+   class Pair<K,V> {} // valid
+
+Example:
+
+class Data<T>
+{
+    public T Text { get; set; }
+}
+
+class MainApp
+{
+    static void Main()
+    {
+        Data<int> a = new Data<int>();
+        a.Text = 10;
+        Data<string> b = new Data<string>();
+        b.Text = "Hello";
+
+        Console.WriteLine(a.Text + " " + b.Text);
+    }
+}  
+
+Example: Stack example
+
+class Stack<T>
+{
+    public T []Items { get; set; }
+    private int index = -1;
+
+    public void Push(T item)
+    {
+        index++;
+        Items[index] = item;
+    }
+    public T Pop()
+    {
+        return Items[index--];
+    }
+ }
+
+class MainApp
+{
+    static void Main()
+    {
+        Stack<int> sint = new Stack<int>();
+        sint.Items = new int[5];
+
+        sint.Push(100);
+        sint.Push(200);
+
+        Console.WriteLine(sint.Pop());
+        Console.WriteLine(sint.Pop());
+
+        Stack<string> s = new Stack<string>();
+        s.Items = new string[3];
+        s.Push("Hello");
+        s.Push("Hi");
+
+        Console.WriteLine(s.Pop());
+        Console.WriteLine(s.Pop());
+    }
+}
+
+

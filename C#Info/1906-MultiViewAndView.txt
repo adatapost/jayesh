@@ -1,0 +1,11 @@
+MultiView and View -- The Content Navigation control
+====================================================================
+  MultiView is parent and it consists more than one "View" controls and
+  ensure that only one "View" should be displayed/rendered at a time.
+
+  MultiView's property - ActiveIndex whose value vary from -1 to number of view.
+
+     -1 value indicates hide all views.
+     0  Value indicates to show 1st view
+     1  second view and so on.
+

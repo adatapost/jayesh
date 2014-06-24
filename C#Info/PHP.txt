@@ -1,0 +1,11 @@
+1. PHP Language with OOP
+2. PHP Core library 
+3. Mail, PDF, Graphics, XML Parasers, JSON Parsers, PDO, MySqlImproved
+4. jQuery - JavaScript library
+5. JavaScript Language, CSS/HTML
+6. Apache configuration - Authentication, Loading module, Set/Reset    dir/file permission.
+7. PHP configuration - override apache config via programatically as    well as .htaccess, robots, URL-rewrite, session tracking
+
+[Prerequisite : OOP, HTML/CSS, JavaScript, Database (MySql)
+
+jQuery-UI, jQuery Validation

@@ -1,0 +1,110 @@
+ASP.NET Controls and Page
+======================================================================
+
+ASP.NET Controls and page as classes located at System.Web Namespace and its sub-namespaces.
+
+The System.Web.UI.Control is the super class of all controls including WebServer Controls, HTMLControls, CustomeControls, UserControl and Pages.
+ 
+
+There are two direct types of Control (ie. They are derived from Control class)
+
+1. Web Server Controls -- These are ASP.NET classes which produce (emit)   dynamic content of HTML/CSS and JavaScript when they are   rendered/processed.
+
+2. HTML Server Controls --- Each html tag has appropriate class exists in ASP.NET class library. The HTML tag is processed only by the web-browser but in case if you want to use HTML tag with C# language then you have to convert HTML tag into HTML Server Control by setting two extra properties:
+
+   <p id="para1" runat="server"></p>
+
+ and you can access this control via C# code:
+
+   para1.innerHTML = "Hello World";
+
+However you can use same DOM in web-brwoser via JavaScript:
+
+      <script>
+            var d = document.getElementById("para1");
+            console.log(d.innerHTML);
+        </script>
+
+
+HTML Server Controls are just HTML tags. They don't have extra feature and we cannot extends HTML Server controls because we are not allowed to create new tags.
+
+In case of WebServer Controls, they are developed using OOP and allow support to extends their abilities. In fact, web-server controls are not replacement of HTML tags/Controls because they offer much much features especially they prevent Script Injection, validate user's requests, encode/decode HTML tags and so on.
+
+ Example: Add "TextBox1" into .aspx and request that .aspx page. Type following content in Textbox and submit it:
+
+    <h1>Hello</h1> + Submit <==== ASP.NET's WEbServer Controls raises                                   RequestValidation error.
+
+
+
+Sub classes of System.Web.UI.Control are
+
+1.  System.Web.UI.WebControls.WebControl (WEb Server Control)
+2.  System.Web.UI.HtmlControls.HtmlControl (Html Server Control)
+3.  System.Web.UI.Page,Master etc are sub-class of Control class.
+
+
+Common Properties and Methods of Control class
+=====================================================
+1. ID -- Unique id of control that is used by Server program
+2. ClientID -- Unique Id of control that is used by client (JavaScript) 		code.
+
+3. Visible - To hide/show control
+             Visible=false will stop the render.
+
+4. Parent - Refere the parent control
+
+5. Page - Refere the page on which it is hosted.
+
+6. Controls -- Collection of children
+
+7. Render() methods -- These methods are responsible to generate HTML    content from the current properties of Control.
+
+Common Proeprties of WebControl class
+=====================================================================
+WebControl properties are for changing border,style,font,colormbckground etc.
+
+1.   Height/Width
+2.  ForeColor, BackColor, BorderColor,BorderStyle, Enabled
+3. ToolTip, TabIndex etc.
+
+Never use these properties instead use "CssClass" property to set "Css" class selector.
+
+
+
+Example:
+
+/webapp/
+       |
+       |----/Content/
+                   Style.css
+       
+       |
+       | Page1.aspx
+
+In Page1.aspx
+-----------------
+
+ <link rel="stylesheet" href="Content/Style.css"/>
+
+
+ <asp:Button id="buttonOne"
+             runat="server"
+             Text = "Click Me"
+             cssClass="MyButton"/>
+
+
+All server controls -- WebServer Controls, HTML Server Controls, User Controls, or Custom Controls must be placed inside the <form runat="server" id="form1"> tag. There must be one and only one <form runat="server"> in each .aspx and .master page.
+
+
+
+
+
+
+
+
+
+
+
+
+
+

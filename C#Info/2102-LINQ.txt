@@ -1,0 +1,188 @@
+LINQ - Language Integrated Query
+=====================================================================
+
+LINQ is technique to filter or search elements from the collection (IEnumerable). Language Integrated Query is C# language and .net framework feature to define "queries" on collection just like those queries written to manage "Databases".
+
+C# Language offer some keywords whereas the .net framework offers APIs.
+
+The LINQ is two step process:
+
+    1. Definition of query (LINQ Definition) 
+    2. Execution of query  (LINQ Execution)
+
+In order to use LINQ in your app, we must have to import the System.Linq namespace (This namespace contains extension methods).
+
+Syntax to define LINQ
+=====================
+
+   from <element> in <elements>
+         [where <expression>]
+           [group <expression>]
+             [orderby <expression>]
+               select <element>
+
+Syntax to execute LINQ
+===================================
+  1. Use foreach loop -- Late or deffered execution
+  2. Call ToArray(), ToList, ToDictionary(), ToString() etc -- Immediate execution.
+
+Example:
+
+class Program
+    {
+        static void Main(string[] args)
+        {
+            int[] nos = { 22, 3, 44, 5, 66, 78 };
+            int start = 1, end = 10;
+
+            //Define a query
+            var query = from n in nos
+                        where n>=start && n<=end
+                        select  n;
+
+
+            //Query execution (Deffered Execution) - 1
+            end = 90;
+            foreach (var t in query)
+            {
+                Console.WriteLine(t);
+            }
+            end = 30;
+            //Query execution (Immediate Execution) - 2 - ToList(), ToArray(), ToDictionary()
+            var result = query.ToList();
+
+            foreach (var t in result)
+            {
+                Console.WriteLine(t);
+            }
+        }
+    }
+
+Example: Query definition and execution inline.
+
+           int[] nos = { 22, 3, 44, 5, 66, 78 };
+
+            var result = (from p in nos
+                          orderby p descending
+                          select p).ToList();
+            foreach (var t in result)
+                Console.WriteLine(t);
+
+Example: List<Emp> -- Filter some rows
+
+public class Emp
+    {
+        public string Name { get; set; }
+        public string Dept { get; set; }
+        public double Salary { get; set; }
+    }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            List<Emp> emps = new List<Emp>()
+            {
+                new Emp(){ Dept="Acc", Name="A1", Salary=9000},
+                new Emp(){ Dept="Acc", Name="A2", Salary=1000},
+                new Emp(){ Dept="Mkt", Name="M3", Salary=2000},
+                new Emp(){ Dept="Mkt", Name="M2", Salary=3000},
+                new Emp(){ Dept="Acc", Name="A3", Salary=4000},
+            };
+
+
+            var empOfMkt = from e in emps
+                           where e.Dept == "Mkt"
+                           select e;
+
+            var empOfAcc = from e in emps
+                           where e.Dept == "Acc"
+                           select e;
+
+
+            foreach (var e in empOfAcc)
+                Console.WriteLine(e.Name + " " + e.Salary + "  " + e.Dept);
+
+            foreach (var e in empOfMkt)
+                Console.WriteLine(e.Name + " " + e.Salary);
+        }
+
+
+
+
+group by    - It groups up similar content data as a key and populate  
+=========     the corresponding "List<E>".
+
+  
+ from <element> in <elements>
+    group <element> by <element.Property>  into <groupObject>
+       select <groupObject>
+
+
+   public class Emp
+    {
+        public string Name { get; set; }
+        public string Dept { get; set; }
+        public double Salary { get; set; }
+    }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            List<Emp> emps = new List<Emp>()
+            {
+                new Emp(){ Dept="Acc", Name="A1", Salary=9000},
+                new Emp(){ Dept="Acc", Name="A2", Salary=1000},
+                new Emp(){ Dept="Mkt", Name="M3", Salary=2000},
+                new Emp(){ Dept="Mkt", Name="M2", Salary=3000},
+                new Emp(){ Dept="Acc", Name="A3", Salary=4000},
+            };
+
+
+            var deptWiseEmps = from e in emps
+                               group e by e.Dept
+                                   into deptGroup
+                                   select deptGroup;
+                                   
+            //Dictionary<String,List<Emp>> == deptGroup
+            foreach (var deptList in deptWiseEmps)
+            {
+                Console.WriteLine(deptList.Key);
+
+                foreach (var e in deptList)
+                {
+                    Console.WriteLine("\t" + e.Name + " " + e.Salary);
+                }
+            }
+        }
+    }
+      
+
+
+
+Example: Order by with List<Emp>
+
+List<Emp> emps = new List<Emp>()
+            {
+                new Emp(){ Dept="Acc", Name="A1", Salary=9000},
+                new Emp(){ Dept="Acc", Name="A2", Salary=1000},
+                new Emp(){ Dept="Mkt", Name="M3", Salary=2000},
+                new Emp(){ Dept="Mkt", Name="M2", Salary=3000},
+                new Emp(){ Dept="Acc", Name="A3", Salary=4000},
+            };
+
+
+            var orderByName = from e in emps
+                              orderby e.Name 
+                              select e;
+
+            var orderBydept = from e in emps
+                              orderby e.Dept
+                              select e;
+
+            foreach (var e in orderBydept)
+                Console.WriteLine(e.Name + " " + e.Salary + " " + e.Dept);
+
+
+
+
+

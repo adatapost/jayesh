@@ -1,0 +1,220 @@
+The CTS
+============================================
+
+As we've learnt that CTS broadly categoried as 1. Base class library and 2. Extended class library. But now, we will learn the TYPES (Datatypes) which are classified based upon memory (RAM) usage.
+
+
+How the memory manager CLR service works?
+
+When we run the .net application, the memory manager allocate memory for the following purposes:
+
+  1. It allocate memory specifically 1 MB called "Stack Frame Memory" to represent local variables, method parameters, method return value and method calls.
+
+  2. If we want to store more data that does not fit into "Stack Frame Memory (1 MB)" then we have to instruct the memory manager to allocate additional memory. We will use "new" keyword to instructs memory manager for more bytes. 
+
+    The additional memory allocated by the memory manager is called "Heap" or "Object" and it will be automatically reclaimed by the CLR's another service called "Garbage collector".
+
+
+Based upon the memory usage CTS falls into two group:
+
+1. Value Types -- They are fixed size(length) datatypes.
+
+               -- They can uses Stack as well as Heap frame memory
+  
+               -- "struct" and "enum" are example Value types.
+
+2. Reference Types -- They are variable length/size datatypes. They                  required variable amount of memory during program                  execution.
+               -- They can only use the "Heap frame".
+
+               -- "Array", "class", "interface" and "delegate" are                    example of Reference types.
+
+Value Types variable represent the exact value that they belongs. 
+  For example,  
+          int no = 19; can store 32 bit integral value
+
+The Reference Types variable can store memory address/reference of an object/Heap or null.
+
+  For example,
+
+          string name = null; //string is class
+          string address = "Hello"; // "Hello" will be stored into the 
+heap whose address will be assigned to "address" reference variable.
+
+
+Architecture of CTS
+===================
+
+The CTS is designed using "unified programming model" (Model to design the class libraries and used in Java, VC++ etc).
+
+As per unified programming model:
+
+1. Each and every type/class must have one and only direct super/base    class.
+
+2. There must be a unique way to group of related types so we can seperate the types from one group to another group.
+
+The Ultimate super/base class
+-------------------------------
+The System.Object is the super class of all CTS including user-defined types.
+
+For example,
+
+  class A {} -- Where "A" class is sub-class of System.Object
+
+
+The Root namespace
+-------------------
+Namespace is a technique to collect similar purpose types under the one name to keep one group of type distinct from another group of types.
+
+The "System" name is main or root namespace of CTS. All CTS types are qualified using "System" namespace.
+
+For example:
+
+ System.String -- class
+ System.Web    --- ASP.NET sub namespace
+ System.Web.UI.Page -- The "Page" class is located at System.Web.UI                        sub-sub namespace.
+
+
+Naming convention of CTS
+------------------------
+1. Use "PascalCase" to name the Types (struct,enum, class, etc) and    namespace. - Capitalize the first letter of each word
+
+2. Use lowercase or "camelCase" to name the local variables, private    fields/variables.
+
+3. Use "PascalCase" to name the "public" methods, properties, events    and so on.
+
+4. Try to define a type into seperate compilation unit (code file).
+
+    For example,
+
+     Employee.cs
+     --------------
+     public class Employee {}
+
+Simple Types (Primitive Types)
+------------------------------
+
+Simple types are "struct" and hence they are value types. Simple types have two names -- CTS name and an alias.
+
+CTS		Alias		Size (Bytes)
+=======================================================
+
+System.Byte	byte		1 (unsigned)
+System.SByte	sbyte		1 (signed)
+System.Int16	short		2  
+System.UInt16 	ushort		2
+System.Int32	int		4
+System.UInt32	uint		4
+System.Int64	long		8
+System.UInt64	ulong		8
+
+System.Single	float		4
+System.Double	double		8
+System.Decimal	decimal		16
+
+System.Bool	bool		N.A (1 bit - can store true or false)
+System.DateTime	System.DateTime	8
+
+System.Char	char		2 Represent unicode char (UTF)
+
+
+
+Here we've two most commonly used classes :
+
+System.Object	object		N.A
+System.String	string		N.A
+
+
+About TYPES
+================
+
+1. struct  -- It is value type
+           -- Its super type name is System.ValueType
+           -- It cannot support inheritance
+
+2. enum   -- It is value type
+          -- Its super type is System.Enum
+          -- It is used to define symbolic constants. (Can't support              inh)
+
+3. class -- It is reference type and allow us to define new class from             the scratch or extending existing one.
+
+4. interface -- It is reference type and it allow us to define behavior            of class.
+
+5. array    -- Arrays in .net framework automatically inherits                System.Array class.
+
+6. delegate -- It is ref type to represent memory reference of methods.               (Function pointer in C/C++). It is used to define events, store method references and to create methods (lambda expressions and anonymous methods).
+
+   Lambda expression is small function and express as mathematical expression: e.g  x => x + x;
+
+
+Access modifiers or access control keywords
+=============================================
+
+The CTS uses following access control keywords to set visibility of entities (type, method, field).
+
+1. public - public entities are visible to everyone. They can be             visible inside or outside the application. There is no             restriction of public entities.
+
+2. private - private entities are only visible in which they are             defined and it is the least visibility control among the             five.
+
+3. protected - protected entities are just like private but protected                entities are visible in sub-classes.
+
+
+4. internal - interal entities are less than "public". These entities               are visible inside the application but they are not               visible outside the app.
+
+5. protected internal - These "entities" are visible inside the               application/assembly or inside the another assembly in                          sub-classes.
+
+Top-level types - types which are not defined into another types (nested) have either "internal" or "public" visibility.
+
+class A <-- Top level
+{
+   class B <--- Not TOP-level
+    {
+    }
+}
+ 
+
+private class A{} <--- Invalid
+
+The default access is "internal" for top-level types.
+
+class A{} <--- internal
+public class B{} <-- public
+internal class C{} <-- internal
+
+
+For nested memebers, conside the following table
+
+Type		Default Access		Can be changed
+--------------------------------------------------------
+class		private		public, private, internal, protected,
+				protected internal
+
+interface	public		Cannot change (N.A)
+
+struct		private		public, private, internal
+
+enum		public		cannot change
+
+delegate	N.A		N.A
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+ 
+
+       
+
+

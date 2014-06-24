@@ -1,0 +1,161 @@
+Data Controls
+====================================================================
+
+Data Controls are complex controls (aka - Classes of ASP.NET) which are used to display data from data source -- database, collection, arrays and also populate controls.
+
+Data controls uses "templates" to design the layout for different purposes. For example, to display emp record we need set of "Labels".
+But, to design update emp form, we need textboxess,dropdown etc control.
+
+
+A "template" is an editable region in which we can add markup, controls, Css etc.
+
+
+These controls are:
+
+1. GridView  - It uses number of "templates" to show/edit/delete data
+		in user-defined ways or tabular form.
+2. FormView  - Single record base insert/delete/update/navigation                (first, last, prev, next).
+3. DetailsView - Same as "FormView" with pre-defined templates.
+
+4. DataList  -- It is a control which display/edit repeated data.
+
+5. Repeater  -- To display repeated data (multiple data).
+
+6. ListView  -- It uses GridView,FormView,DetailsView,DataList and many
+                more controls to define insert/delete/edit/select 
+                templates.
+
+7. Chart     -- To display chart/graph.
+
+GridView Controls
+===============================================
+
+Example-1: Default template
+
+
+1. Add GridView1 into .aspx page.
+2. Code:
+
+protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            BindGrid();
+        }
+    }
+
+    public void BindGrid()
+    {
+        using (SqlConnection cn = new SqlConnection())
+        {
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                cn.ConnectionString = Db.CnStr;
+                cmd.CommandText = "select * from emp";
+                cmd.Connection = cn;
+                cn.Open();
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    GridView1.DataSource = dr;
+                    GridView1.DataBind();
+                }
+                cn.Close();
+            }
+        }
+    }
+
+
+Basically a GridView control has following tempates:
+
+ BoundField (Label), CheckBoxField, HyperLinkField,ImageField, ButtonField(Button,ImageButton,LinkButton),CommandField (Pre-defined buttons), TemplateField (Custom template).
+
+So we will use BoundField,"CheckBox","HyerLink", and "ImageField".
+
+
+1. Add "GridView1" into .aspx
+2. Code in .cs file
+
+protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            BindGrid();
+        }
+    }
+
+    public void BindGrid()
+    {
+        using (SqlConnection cn = new SqlConnection())
+        {
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                cn.ConnectionString = Db.CnStr;
+                cmd.CommandText = "select * from emp";
+                cmd.Connection = cn;
+                cn.Open();
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    GridView1.DataSource = dr;
+                    GridView1.DataBind();
+                }
+                cn.Close();
+            }
+        }
+    }
+
+3. In designe view click at side-bar menu [>] at GridView + Edit Columns.
+  1. Turn off [ ] Auto Generated Fields
+  2. Add BoundField  and set following properties.
+       HeaderText = "ID"
+       DataField = "EmpID" <--- Table column name
+
+     Add another BoundField for name (EmpName)
+     Add another BoundField for JoinDate and set
+        HeaderText, DataField and DataFormatString="{0:dd-MMM-yyyy}"
+
+  3. Add CheckboxField, set HEaderText="Is Married"
+                            DataField ="MStatus"
+  4. Add HyperLink field, set HeaderText, DataField="Site" and
+                              DataNAvigateURLFields="Site"
+  5. Add ImageField, set HeaderText, DataImageUrlField="Photo" and
+      DataImageUrlFormatString = ~/photo/{0} 
+
+
+  
+Example-3 : Use of "TemplateField" -- Custom view/template.
+
+ 
+1. Add "GridView1" + Side-bar + Edit Columns
+2. Turn off [ ] Auto Generated Fields
+3. Add "TemplateField"
+
+   After adding template field close the Edit Columns dialog.
+4. SideBar+Menu + Edit Templates.
+
+    In "Edit Templates" menus we will have number of templates:
+
+     1. ItemTemplate -- To show data
+     2. AlternatingItemTemplate - To show data on even row.
+     3. EditItemTemplate - To design edit form.
+     4. Header and Footer template - To design header and footer 				templates.
+     5. EmptyDataTemplate - It will be shown when a source is empty.
+
+     6. PagerTemplate -- To add page view -- next,prev navigation.
+
+  
+
+   To read data from data source and assign them to the control's properties which are placed inside the GridView's template, we must have to use "Eval()" function.
+
+      Syntax:  Eval("ColumnName","FormatString")
+
+       e.g   Eval("JoinDate","{0:dd-MM-yyy}")
+
+ <asp:Label 
+   id="t1" runat="server" Text='<%#Eval("JoinDate","{0:dd-MM-yyy}")'/>
+
+ =>Choose Item template and drop controls in it.
+ =>Choose side-bar menu of each control and bind the field.
+     + Edit Bindings + Custom Bindings:
+         Eval("EmpName")
+
+ 

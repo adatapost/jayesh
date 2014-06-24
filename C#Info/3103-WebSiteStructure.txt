@@ -1,0 +1,47 @@
+ASP.NET WebApp/WebSite files and directory structure
+====================================================================
+A website/webapp is madeup of number of resources (static & dynamic). With ASP.NET WebForm application, we must have to stick standard directory structure.
+
+
+1. Home Page  
+   Home Page name is "Default.aspx". It will be executed automatically    when url include no-file name.
+
+   PS: It is important to add default.aspx per folder to avoid       directory listing.
+
+2. web.config -- Application configuration file used to overrride the
+   default settings.
+
+   There can be one or more web.config but the first one that is    located at root (/ or ~) is entry-point (main).
+
+3. global.asax -- Application event class (file). This file must be    located at the root and you can use this file to handle application,     session or request specific events.
+
+
+4. Special purpose folders
+
+   There are some special purpose folders exists in wbsite and they    have finit or designate purpose.
+
+   1. Bin -- Any DLL assembly you wish to use in your web-site must be
+	     copied under "Bin" folder.
+
+Example: Create Library Project + Name the Project (e.g MyApp) + Add some public          classes + Build it. (MyApp.dll)
+
+        Create website + add "Bin" folder can copy MyApp.dll into "Bin"
+
+         OR
+
+       WebSite Menu + Add Reference + Browse to .dll file
+
+ 2. App_Code -- Any component (class/interface/delegate etc) you wish     to create in website must be placed inside the App_code folder. If .cs file is not copied into App_code then file wont be compiled.
+
+
+ 3. App_Data -- Any local database (MsAccess, XML, or MSSSQL) must be                 placed inside the App_Data.
+
+ 4. App_GlobalResources and 
+ 5. App_LocalResources    -- It creates resource documents (XML) to     store language and culture specific data/messages/strings/images.
+ 
+ 6. App_Browsers and Theme are not recommended features.
+
+
+Apart from the current folder structure, you can add folders for JavaScripts (Scripts), Styles (for CSS), Admin, Manager, Customer to store user-specific files/programs etc.
+
+

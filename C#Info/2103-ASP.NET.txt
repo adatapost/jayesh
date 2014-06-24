@@ -1,0 +1,67 @@
+ASP.NET Machine Wide Configration
+===================================================================
+
+Any kind of application developed using ASP.NET will automatically inherits some of the basic (essential) settings from machine.config and web.config files which are located at HOME of .net framework - C:\Windows\Microsoft.NET\Framework\Version\Config\MAchine and web.config.
+
+
+Machine.config and web.config are acts as a super-class and "web.config" in your application will be the sub-class. Whatever configuration changes you need must be updated in your "web app's" web.config file. Machine.config and web.config contains 'default' settings and to override default settings, we must have to update web-app's web.config file.
+
+ASP.NET "Temporary ASP.NET Files"  folder
+=================================================================
+ 
+ASP.NET web-app uses C# or VB.NET languages and we know that these are compilers (they uses compile technique). Each program (pages) in ASP.NET application must be compiled before it is executed. In fact each page/program (.cs,.vb or .aspx, .master etc..) will be compiled and stored into Dynamic Link Library assembly .DLL.
+
+The "Temporary ASP.NET Files" contains "compiled" code of your webapp which uses "extra" space to deploy your webapp so while deploying ASP.NET web-app, we have to allocate or demand extra hard-drive space for temp files.(100 MB = 75 MB for webapp host and + 25 MB for processing or temp).
+
+ 
+What tool in .net framework compiles web-site content?
+================================================================
+
+The aspnet_compiler.exe is responsible to compile pages/programs in website web-app.
+
+What if we want to compile whole web-application at once?
+=================================================================
+
+ The aspnet_compiler.exe compiles those pages which are request very first time or pages content is modified. This type of compilation is called "fly-on" compilation.
+
+
+  Web-browser====>Request the sample.aspx===> WebServer===>AppServer
+                                                          (ASP.NET)
+                                                           ||
+                                                           \/
+                   Check whether a file has associate compiled code?
+			||
+			\/
+		   If not compiled then go for compilation and produce 		  .dll assembly and go for execution.
+
+                   If "compiled" code exists (.dll) then go for 		   execution
+                       ||
+		       \/
+                   Produce Output
+		       ||
+		       \/
+                    Submit Output (Response) to WebServer(IIS)
+		       |
+ <---------Response-----
+
+To compile whole webapp at one, the VS offer another project template    called "ASP.NET Web Application == File + New + Project". This template require VS to be build with "Build" tool.
+
+
+ WebSite Vs WebApplication Project Template
+ ============================================
+
+  In WebSite, each page or code file will be compiled seperately on   demand.
+
+  WebApplication project template uses visual studio's build factility   to create single .dll assembly of all pages and code.
+
+
+
+What is "Publish WebSite" in VS's Build Menu or in short cut menu in "Solution Explorer"?
+====================================================================
+
+ This tool of VS will compile your web-site and also deploy it with  FTP, HTTP, FileSystem or remove location.
+
+
+
+
+

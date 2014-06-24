@@ -1,0 +1,19 @@
+1. C# Language - class, interface, delegate, enum & struct
+2. Collection Framework and Generics
+3. Extension Method, Anonymous methods, Partial class
+
+4. ADO.NET
+5. LINQ to collection, sql
+6. XML, LINQ to XML
+7. Entity Data Model - EDM
+
+8. ASP.NET, Page & Control Framework
+9. Authentication & Authorzation
+10. ASP.NET State Management System
+11. Handlers and modules
+12. Report tools
+
+13. AJAX, MSForm and jQuery 
+
+
+

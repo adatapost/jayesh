@@ -1,0 +1,323 @@
+Parse Method
+================================================================
+
+ String data will be parsed into "simple" type with the help of "Parse", "TryParse" and "TryParseExact (Date)" methods:
+
+
+ e.g
+   
+  string noStr="10";
+  int intNo = int.Parse(noStr);
+
+  The "Parse" will throws an error if "string" contains invalid   sequence.
+
+
+  The TryParse(string,out varName) - method handle the exception and   store result into out parameter variable.
+
+  string noStr="10";  //noStr="aa"
+  int no;
+ 
+  if(int.TryParse( noStr, out no)) 
+   {
+      Console.WriteLine("Valid :" + no); 
+    }
+   else
+    {
+      Console.WriteLine("Invalid");
+     }
+
+  
+Example:
+
+   string str="10.10";
+
+   int no;
+   double no1;
+   float no2;
+   int.TryParse(str, out no);
+   Console.WriteLine(no); //0 -- if failed then assign 0 value
+   double.TryParse(str, out no1);
+   float.TryParse(str, out no2);
+   Console.WriteLine(no1); // 10.10
+   Console.WriteLine(no2); // 10.10
+
+
+Type cast operator () and Convert class methods
+================================================================
+
+ It cast data from one simple type to another simple type you can use () cast operator and Convert.XXXX() methods
+
+  The () cast operator cannot prevent data overflow where as Convert.ToXXXX() method throws an exception when overflow arrise.
+
+            int no = 2110;
+            byte bt =(byte) no;
+
+            Console.WriteLine(bt);
+
+            byte bt1 = Convert.ToByte(no);  //Throws an exception
+            Console.WriteLine(bt1);
+
+
+ You can use "checked" block to determine the arithmetic overflow:
+
+e.g
+
+            int no = 2110;
+
+            checked
+            {
+                byte bt = (byte)no;
+ 
+                Console.WriteLine(bt);  //Exception will be thrown
+            }
+
+ default status of "block" is unchecked:
+
+          int no = 2110;
+
+            unchecked
+            {
+                byte bt = (byte)no;
+ 
+                Console.WriteLine(bt);  //Exception wont thrown
+            }
+
+
+Convert simple type value to  String - ToString()
+====================================
+      int no=10;
+      string str = no.ToString();
+
+     ToString([format]) method also format value:
+
+e.g
+
+ double amount = 10000012.23432;
+ Console.WriteLine(amount.ToString("N")); // N - number format
+ Console.WriteLine(amount.ToString("C")); // N - number format
+ Console.WriteLine(amount.ToString("N3")); // N - number format
+ Console.WriteLine(amount.ToString("C5")); // N - number format
+
+
+
+DateTime DataType
+=================================================
+
+
+Current DateTime instance
+=========================
+            DateTime now = DateTime.Now; //local datetime
+            DateTime nowUtc = DateTime.UtcNow; // Universal time
+
+            Console.WriteLine(now);
+            Console.WriteLine(nowUtc);
+
+Parse the string
+=================
+            string str = "12/31/2013 20:20:20";
+            DateTime dt = DateTime.Parse(str);
+            Console.WriteLine(dt);
+
+OR
+
+            string str = "12/31/2013 8:20:20 AM";
+            DateTime dt = DateTime.Parse(str);
+            Console.WriteLine(dt);
+
+
+DateFormat characters
+=========================
+
+Folowing chars format the datetime instance:
+
+             DateTime now = DateTime.Now;
+
+            Console.WriteLine(now.ToString("d"));  //Short Date
+            Console.WriteLine(now.ToString("t")); //Short Time
+            Console.WriteLine(now.ToString("M")); //Month day
+            Console.WriteLine(now.ToString("y")); //Month year
+
+            Console.WriteLine(now.ToString("dd")); // day num
+            Console.WriteLine(now.ToString("ddd")); // day abbr
+            Console.WriteLine(now.ToString("dddd")); // full day
+            Console.WriteLine(now.ToString("MM")); // month num
+            Console.WriteLine(now.ToString("MMM")); // month abbr Jan
+            Console.WriteLine(now.ToString("MMMM")); // full month 
+
+            Console.WriteLine(now.ToString("hh:mm:ss tt"));
+            Console.WriteLine(now.ToString("HH:mm:ss"));
+
+            Console.WriteLine(now.ToString("dd-MM-yyy hh:mm:ss tt"));
+
+
+
+Parse the string using date formats
+======================================
+
+You can choose your own date format to parse the string date:
+
+            string str = "31/12/2002 20:20:20";
+            string strDateFormat = "dd/MM/yyyy HH:mm:ss";
+            DateTime dt;
+
+            DateTime.TryParseExact(str, 
+                strDateFormat, 
+                System.Globalization.CultureInfo.InvariantCulture, 
+                System.Globalization.DateTimeStyles.None,
+                out dt);
+
+            Console.WriteLine(dt);
+
+Example:
+
+            string str = "20121031";
+            string strDateFormat = "yyyyMMdd";
+            DateTime dt;
+
+            DateTime.TryParseExact(str, 
+                strDateFormat, 
+                System.Globalization.CultureInfo.InvariantCulture, 
+                System.Globalization.DateTimeStyles.None,
+                out dt);
+
+            Console.WriteLine(dt);
+
+Add/subtract parts (day,month, mins, seconds etc)
+======================================================
+ DateTime.AddXXXXX(value) through which we can add/subtract DateTime parts.
+
+            DateTime now = DateTime.Now;
+
+            Console.WriteLine(now.AddDays(-4));
+            Console.WriteLine(now.AddDays(4));
+
+Find the difference between two DateTime instances
+===================================================
+            DateTime dt1 = DateTime.Parse("1/1/2004");
+            DateTime now = DateTime.Now;
+
+            TimeSpan diff = now - dt1;
+            Console.WriteLine(diff.TotalDays);
+            Console.WriteLine(diff.TotalHours);
+            Console.WriteLine(diff.TotalMinutes);
+
+
+ TimeSpan struct store difference of two DateTime object and calculate days, mins, hours etc.
+string
+==============================================================
+The "string" is alias of System.String. In .net fram
+ework we have two types of "Strings":
+
+  1. Immutable (readonly) string : Content of string cannot be changed                                   once assigned.
+     e.g System.String 
+
+           string name = "Hello";
+           name = name + " Raj";
+ 2. Mutable (Writable) -- Content of string can be changed during                             program execution.
+
+     e.g System.Text.StringBuilder.
+
+   Example: The following example explain how much time will be taken by "string" and "StringBuilder" to concant same amount of data.
+
+
+
+Using "string":
+
+           string str = "Hello";
+
+            System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
+            watch.Start();
+            for (int i = 1; i <= 100000; i++)
+            {
+                str = str + i;
+            }
+            watch.Stop();
+
+            Console.WriteLine(watch.ElapsedMilliseconds);
+
+
+using "StringBuilder":
+
+            System.Text.StringBuilder sb = new StringBuilder();
+            sb.Append("Hello");
+
+            System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
+            watch.Start();
+            for (int i = 1; i <= 100000; i++)
+            {
+                sb.Append(i);
+            }
+            watch.Stop();
+
+            Console.WriteLine(watch.ElapsedMilliseconds);
+
+
+We will always use "StringBuilder" when we need concatenting result.
+
+
+The  System.Diagnostics.Stopwatch  class
+=============================================
+It is anylisys tool for the developer so she/he can measure the time taken by the process or routime.
+
+
+String methods
+==============
+
+1. Length - Find the length of string
+2. IsNullOrEmpty
+3. IsNullOrWhitespace  -- Returns true if string is empty or null or                           whitespace.
+
+            string str = null;
+
+            if (!string.IsNullOrEmpty(str))  //Validation
+            {
+                Console.WriteLine(str.Length);
+            }
+
+4. ToUpper(), ToLower()
+
+            Console.WriteLine(str.ToLower());
+            Console.WriteLine(str.ToUpper());
+
+5. Search functions:
+
+            Console.WriteLine(str.EndsWith("un"));
+            Console.WriteLine(str.StartsWith("T"));
+            Console.WriteLine(str.Contains("Red"));
+
+6. IndexOf, LastIndexOf
+   
+ Returns index of search string, returns -1 if fails.
+
+        string str = "The red sun and red rose";
+        int i = str.IndexOf("red", 0); // from 0 index
+        Console.WriteLine(i);
+         i = str.IndexOf("red", i+1); // from i+1 index
+        Console.WriteLine(i);
+
+        i = str.IndexOf("red", i + 1); // from i+1 index
+        Console.WriteLine(i); 
+
+Ex: 
+       string str = "The red sun and red rose";
+        int i = -1;
+
+        do
+        {
+            i = str.IndexOf("red", i + 1); // from 0 index
+            Console.WriteLine(i);
+        } while (i != -1);
+           
+Ex:
+
+       string str = "The red sun and red rose";
+        int i = str.Length - 1 ;
+
+        do
+        {
+            i = str.LastIndexOf("red", i + 1); // from 0 index
+            Console.WriteLine(i);
+        } while (i != -1);
+
+
+

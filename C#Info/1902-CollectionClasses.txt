@@ -1,0 +1,333 @@
+1. List<T>
+
+   It is dynamic array where we can insert/delete elements randomly. The size of List<T> will be grows or shrinks when we add or remove elements.
+
+1. Add(element) -- To append an element.
+
+           List<string> cities = new List<string>();
+
+            cities.Add("Mehsana");
+            cities.Add("Patan");
+
+2. [integer_index] - To return an element  or to set value.
+            List<string> cities = new List<string>();
+
+            cities.Add("Mehsana");
+            cities.Add("Patan");
+
+            Console.WriteLine(cities[0]);
+            cities[0] = "Meh";
+            Console.WriteLine(cities[0]);  
+
+3 Insert(index,Element) -- Insert an element at given index.
+
+
+            List<string> cities = new List<string>();
+
+            cities.Add("Mehsana");
+            cities.Add("Patan");
+
+            Console.WriteLine(cities[0]);
+            cities[0] = "Meh";
+            Console.WriteLine(cities[0]);
+
+            cities.Insert(0, "Surat");
+            cities.Insert(1, "Ahmedabad");
+
+            foreach (var city in cities)
+            {
+                Console.WriteLine(city);
+            }
+
+4. RemoveAt(index)
+   Remove(Element)
+   RemoveAll(predicate -- lambda expression)
+   Clear() -- Remove all elements
+
+           List<string> cities = new List<string>();
+
+            cities.Add("Mehsana");
+            cities.Add("Patan");
+
+            Console.WriteLine(cities[0]);
+            cities[0] = "Meh";
+            Console.WriteLine(cities[0]);
+
+            cities.Insert(0, "Surat");
+            cities.Insert(1, "Ahmedabad");
+
+            foreach (var city in cities)
+            {
+                Console.WriteLine(city);
+            }
+
+            cities.RemoveAt(0);
+            cities.Remove("Meh");
+            
+            foreach (var city in cities)
+            {
+                Console.WriteLine(city);
+            }
+
+Example: Lambda expression (Predicate<T>) to remove elements
+
+            List<string> cities = new List<string>();
+
+            cities.Add("Mehsana");
+            cities.Add("Patan");
+ 
+            cities.Insert(0, "Surat");
+            cities.Insert(1, "Ahmedabad");
+            cities.Add("Merut");
+            Predicate<string> k = d => d.StartsWith("S");
+
+            cities.RemoveAll((a) => a.StartsWith("M"));
+            //cities.RemoveAll(k);
+ 
+            foreach (var city in cities)
+            {
+                Console.WriteLine(city);
+            }
+
+Example: Object Initialization
+
+          List<string> cities = new List<string>()
+                {
+                    "Mehsana","Raj","Patan"
+                };
+            
+            foreach (var city in cities)
+            {
+                Console.WriteLine(city);
+            }
+
+
+Example: Collect the "Emp" object
+
+public class Emp
+    {
+        public int ID { get; set; }
+        public string Name { get; set; }
+    }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            List<Emp> emps = new List<Emp>();
+            emps.Add(new Emp() { ID=10, Name="Rajesh" });
+            emps.Add(new Emp() { ID = 20, Name = "Rajesh1" });
+            emps.Add(new Emp() { ID = 30, Name = "Rajesh2" });
+            emps.Add(new Emp() { ID = 40, Name = "Rajesh3" });
+
+            foreach (var emp in emps)
+                Console.WriteLine(emp.ID + " " + emp.Name);
+
+        }
+    }
+
+Example: extends the List<T> and add some useful methods in it.
+
+public class Emp
+    {
+        public int ID { get; set; }
+        public string Name { get; set; }
+    }
+    public class Emps : List<Emp>
+    {
+        public void Add(int id, string name)
+        {
+            Add(new Emp() { ID=id, Name=name });
+        }
+        public void PrintEmps()
+        {
+            foreach (var emp in this)
+                Console.WriteLine(emp.ID + " " + emp.Name);
+        }
+    }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Emps emps = new Emps();
+            
+            emps.Add(new Emp() { ID=10, Name="Rajesh" });
+            emps.Add(new Emp() { ID = 20, Name = "Rajesh1" });
+            emps.Add(new Emp() { ID = 30, Name = "Rajesh2" });
+            emps.Add(new Emp() { ID = 40, Name = "Rajesh3" });
+            emps.Add(40, "Rohan");
+
+            foreach (var emp in emps)
+                Console.WriteLine(emp.ID + " " + emp.Name);
+
+            emps.PrintEmps();
+        }
+    }
+
+2. Dictionary<K,V> class
+
+It is collection KeyValuePair<K,V> entries where K stands for key and must be unique and V stands for value.
+
+Example:
+        Dictionary<int, string> std = new Dictionary<int, string>();
+
+        //Add an entry Key-Value (Pair)
+
+        std.Add(10, "R");
+        std.Add(1, "B");
+        std.Add(30, "P");
+        if (std.ContainsKey(10))
+            Console.WriteLine("10 is exists");
+        else
+           std.Add(10, "T");
+
+        //Set or get using key
+
+        std[10] = "Rajesh";
+        Console.WriteLine(std[10]);
+
+        //Remove an entry - returns true if removed
+        Console.WriteLine(std.Remove(10));
+
+        //Iterate all entries
+        foreach (KeyValuePair<int, string> e in std)
+            Console.WriteLine(e.Key + " " + e.Value);
+        foreach (var t in std)
+            Console.WriteLine(t.Key + " " + t.Value);
+
+Example: Represent country-states data
+
+ Dictionary<string, List<string>> cnt = new Dictionary<string,                                                      List<string>>();
+        cnt.Add("IN", new List<string>() { "Guj" });
+        cnt.Add("USA", new List<string>());
+
+        cnt["IN"].Add("Raj");
+        cnt["USA"].Add("OC");
+        cnt["USA"].Add("NY");
+
+        foreach (var c in cnt)
+        {
+            Console.WriteLine(c.Key);
+            foreach (var s in c.Value)
+            {
+                Console.WriteLine("\t" + s);
+            }
+        }
+
+Example: Count the occrence of 'char'
+
+         string str="AACDERFSRASA";
+            Dictionary<char, int> count = new Dictionary<char, int>();
+
+            foreach (var c in str)
+            {
+                if (!count.ContainsKey(c))
+                    count.Add(c, 0);
+
+                count[c]++;
+            }
+
+            foreach (var e in count)
+                Console.WriteLine(e.Key + " " + e.Value);
+        }
+
+Example: Represent "students" data
+
+ public class Student
+    {
+        public int Roll { get; set; }
+        public string Name { get; set; }
+    }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Dictionary<int, Student> students = new Dictionary<int, Student>();
+            students.Add(10, new Student() { Roll=10, Name="Raj" });
+            students.Add(20, new Student() { Roll = 20, Name = "Raj1" });
+            students.Add(30, new Student() { Roll = 30, Name = "Raj2" });
+
+            Console.WriteLine(students[10].Name);
+
+            students.Remove(210);
+
+            if (students.ContainsKey(20))
+                Console.WriteLine("Exist");
+            else
+                Console.WriteLine("Not found");
+
+        }
+    }
+
+Example: Extend the Dictionary<K,V>
+
+
+public class Student
+    {
+        public int Roll { get; set; }
+        public string Name { get; set; }
+    }
+    public class Students : Dictionary<int,Student>
+    {
+        public void Add(int roll, string name)
+        {
+           Add(roll, new Student() { Roll = roll, Name = name });
+        }
+
+
+    }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Students students = new Students();
+            students.Add(10, "Ram");
+            students.Add(20, "Mohan");
+
+            Console.WriteLine(students[10].Name);
+
+            students.Remove(210);
+
+            if (students.ContainsKey(20))
+                Console.WriteLine("Exist");
+            else
+                Console.WriteLine("Not found");
+
+            foreach (var e in students)
+            {
+                Console.WriteLine(e.Value.Roll + " " + e.Value.Name);
+            }
+
+        }
+    }
+
+Example : Queue<T>, Stack<T>
+
+Stack<string> stack = new Stack<string>();
+            stack.Push("A");
+            stack.Push("B");
+            stack.Push("C");
+            Console.WriteLine(stack.Pop()); //c
+            Console.WriteLine(stack.Pop()); //B
+            Console.WriteLine(stack.Pop()); //A
+
+            Queue<int> queue = new Queue<int>();
+            queue.Enqueue(10);
+            queue.Enqueue(20);
+            Console.WriteLine(queue.Dequeue());
+            Console.WriteLine(queue.Dequeue());
+
+
+Example: LinkedList<T>
+
+
+            LinkedList<int> nos = new LinkedList<int>();
+            nos.AddFirst(100);
+            nos.AddFirst(200);
+            nos.AddLast(300);
+            nos.AddFirst(new LinkedListNode<int>(90));
+
+            var node = nos.Find(100);
+            nos.AddBefore(node, 50);
+
+            foreach (var t in nos)
+                Console.WriteLine(t);

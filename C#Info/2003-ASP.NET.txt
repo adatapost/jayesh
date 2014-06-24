@@ -1,0 +1,145 @@
+ASP.NET 4.0 (VS 2010) - ASP.NET 4.5 (VS 2012)
+=====================================================================
+
+ASP.NET is web application infrastructure class library to develop and deploy enterprize (business) class web application. You can use the .net framework CLS compliant language to author the web-app. [C#, VB.NET, Managed C++ etc]
+
+In short ASP.NET is an extended class library of .net framework. You can learn/see types from "System.Web namespace".
+
+How many types of applications and application design is to created by the ASP.NET?
+=====================================================================
+
+ There are two types of web-apps created and deployed by the ASP.NET
+
+   1. Web application (website) and
+   2. Web Service application
+
+
+There are following application-design pattern in ASP.NET to develop/deploy app:
+
+   1. WebForm Application -- A single form/page is a "class" which 		includes HTML/CSS/JavaScript and C#/VB.NET code.
+
+   2. MVC Application - This design seperate the code for different purposes including -- HTML/CSS/JavaScript (client or View code), C# code to perform database & data (Model code) and C# code which handle requests/responses (Controller)
+
+   3. Single Page Application - It provide simple yet powerful design                                 pattern to develop pages just like in                                 PHP.
+
+   4. Web Service Application - It implements RPC (Remote Procedure Calls) protocol to expose functionalities of classes remotely. This kind of system is known as WEB API.
+
+ 	Facebook, Twitter, Google etc uses web-api or web-service to         exopse their app's functionalities to clients.
+
+
+
+What software needed to develop and deploy ASP.NET webapp?
+===============================================================
+
+1. The .net framework
+
+2. Web-Server -- IIS - Internet Information Services (6 ot 7 or 8)
+
+3. Visual Studio (optional) (VS is commertial product)
+   OR
+   Web Matrix from Microsoft and it is free
+   OR
+   Notepad or editor
+   
+4. Optionally database product - Oracle, MSSQL or MySql etc
+
+Install the IIS  (Win7 or Win8)
+===============================
+
+ Control Panel + Programs & Features + Turn on/off windows features
+  + [x] Web Management Tools 
+    [x] World Wide Web services
+  + OK to finish and installation will be started
+
+
+Open web-browser and test http://localhost
+
+
+Start/stop IIS
+=============
+Control Panel + Administrative Tools + IIS Manager
+
+Home of IIS (Default document folder)
+=========================================
+
+C:\inetpub\wwwroot will be the default home (virtual) directory.
+
+Create an application
+=======================================================
+Manually (Without using VS)
+========
+
+  1. Create a folder anywhere but atlest you've write/read/delete 	permission.
+  2. IIS Manager + Expand + MACHINE NAME + Sites  + Default Sites + right click to "Add Application" -- Set /virtualPath and c:\x\x absolute path.  (e.g c:\csnet\test-app is the actual path and /test is virtual path)
+
+ 2.   Create "Default.aspx" -- 'Default' is home page name
+
+      By default programming language is VB.NET.
+
+Default.aspx (VB)
+==================
+ 
+<!doctype html>
+
+<html>
+  <head>
+     <meta charset="utf-8"/>
+     <title>ASP.NET</title>
+   </head>
+   <body>
+      <h1>Welcome Home</h1>
+      <%
+         Dim no = 10
+       %>
+      <p>Value : <%=no%></p>
+   </body>
+</html>
+
+
+Default.aspx (C#)
+==================
+<%@Page Language="C#"%>
+<!doctype html>
+
+<html>
+  <head>
+     <meta charset="utf-8"/>
+     <title>ASP.NET</title>
+   </head>
+   <body>
+      <h1>Welcome Home</h1>
+      <%
+        int no = 10;
+       %>
+      <p>Value : <%=no%></p>
+   </body>
+</html>
+
+After that open http://localhost/test
+
+
+Using Visual Studio
+===================
+
+File + New + WebSite + Web Location="Http" - http://localhost/siteName + OK
+
+Working with IISExpress web-server
+===================================================================
+This web-server installed with VS and you can use it to test the webapp even in absense of IIS.
+
+ In VS, choose Web Location="FileSystem" and create app in any other   folder.
+
+ IISExpress or Development Server will be started when you press F5  (Debug + Run with or without debug).
+
+ Each running webapp is assigned a unique but dynamic port.  http://localhost:54333/siteName
+
+
+
+ 
+
+
+
+
+  
+    
+

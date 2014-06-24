@@ -1,0 +1,156 @@
+Five list controls
+====================================================================
+
+1. DropDownList  -- Single item selection
+2. ListBox  -- Single & Multi item selection
+3. RadioButtonList - Single item selection
+4. CheckboxList - Multiple item selection
+5. BulletedList - <ol> <ul> with Text and hyperlinks
+
+All five controls have following common properties:
+
+1. Items - collection. To add instance of ListItem(Text,Value) object
+
+2. SelectedItem - Returns an instance of ListItem which is selected.
+
+3. SelectedIndex - Returns an index of item.
+
+4. SelectedValue - Returns a value of selected item.
+
+5. DataSource  - To assign IEnumerable datalist or datasource to 		pupulate items collection.
+
+6. DataTextField - To set dispay data (Text of ListItem)
+
+7. DataValueField - To set value data (Value of ListItem)
+
+8. DataBind() -- Populate the List controls.
+
+9. AutoPostBack = false  | true -- When true, page will be submitted                   when list item is changed/checked/selected.
+
+
+
+Example:
+
+ 1. Add Page1.aspx with,
+
+    DropDownList1
+
+    Button1
+
+    Text  : Label1
+    Value : Label2
+    Index : Label3
+
+ 2. add some listitem into DropDown's Item collection
+
+ 3. Code in Button1_Click
+
+        Label1.Text = DropDownList1.SelectedItem.Text;
+        Label2.Text = DropDownList1.SelectedValue;
+        Label3.Text = DropDownList1.SelectedIndex.ToString();
+
+
+Example: Add PAge2.aspx with,
+
+
+
+    ListBox1
+
+    Button1
+
+    Text  : Label1
+    Value : Label2
+    Index : Label3
+
+ 2. add some listitem into ListBox's Item collection
+
+ 3. Code in Button1_Click
+     if(ListBox1.SelectedIndex != -1) 
+      {
+        Label1.Text = ListBox1.SelectedItem.Text;
+        Label2.Text = ListBox1.SelectedValue;
+        Label3.Text = ListBox1.SelectedIndex.ToString();
+       }
+
+   Note: RadioButtonList and ListBox, item isn't selected by default.
+
+
+Example: CheckboxList. 
+
+ Hobbies:
+    CheckBoxList1
+    Button1
+    Text: Label1
+    Value : Label2
+
+ Click code of Button1
+      string text = "", value = "";
+        foreach (ListItem  item in CheckBoxList1.Items)
+        {
+            if (item.Selected)
+            {
+                text = text + item.Text + ",";
+                value = value + item.Value + ",";
+            }
+            Label1.Text = text;
+            Label2.Text = value;
+         }
+
+
+Example: Populate ListControls dynamically,
+-----------------------------------------------------------------
+ Always put your code under IsPostBack block in Page_Load or Click event:
+
+  public void page_load()
+   {
+     if(!IsPostBack) {
+
+        DropDownList1.Items.Add( new ListItem("India","In") );
+        DropDownList1.Items.Add( new ListItem("Neapl","Np") );
+     }
+   }
+ 
+
+Example: Populate ListControl dynamically using DataBinding Technique
+-----------------------------------------------------------------
+ 
+
+Example: Create Product class
+
+public class Product
+{
+    public int ID { get; set; }
+    public string Name {get;set;}
+}
+
+1. Add PAge1.aspx
+  
+   DropDownList1
+   Button1
+   Label1,Label2
+
+2. Write following in code-behind:
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            List<Product> products = new List<Product>()
+            {
+                 new Product(){ ID=10, Name="Pencil"},
+                 new Product(){ ID=11, Name="Pen"},
+                 new Product(){ ID=12, Name="Book"},
+            };
+
+            DropDownList1.DataSource = products;
+            DropDownList1.DataTextField = "Name";
+            DropDownList1.DataValueField = "ID";
+            DropDownList1.DataBind();
+
+        }
+    }
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+        Label1.Text = DropDownList1.SelectedItem.Text;
+        Label2.Text = DropDownList1.SelectedValue;
+    }

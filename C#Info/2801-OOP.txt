@@ -1,0 +1,298 @@
+abstract modifier
+====================================================================
+It define a class or method as an abstract. Abstract methods do not have method body that means it is unimplemented. If class contains an abstract method then the class must be qualified with abstract keyword.
+
+But it is not mandatory that an abstract class have abstract methods.
+
+public abstract class Language
+{
+   public void Speak() {}
+}
+
+OR
+
+public abstract class Language
+{
+   public abstract void Speak(); // abstract method
+}
+
+An abstract class cannot be instantiated so we must have to inherit an abstract class in order to use it.
+
+
+Example: Create component called "Question" that contains a question text , three answers and two abstract methods to determine correct answer and display the answer.
+
+ public abstract class Question
+    {
+        public string QuestionText { get; set; }
+
+        public string Answer1 { get; set; }
+        public string Answer2 { get; set; }
+        public string Answer3 { get; set; }
+
+        public abstract bool IsCorrect { get; }
+        public abstract void Display();
+    }
+
+  public class SingleChoiceQuestion : Question
+    {
+        public int CorrectAnswer { get; set; }
+        public int UserAnswer { get; set; }
+
+        public override bool IsCorrect
+        {
+            get { return CorrectAnswer == UserAnswer; }
+        }
+        public override void Display()
+        {
+            Console.WriteLine(QuestionText);
+            Console.WriteLine("1. " + Answer1);
+            Console.WriteLine("2. " + Answer2);
+            Console.WriteLine("3. " + Answer3);
+            Console.WriteLine("Enter your choice : ");
+            int ch;
+            int.TryParse(Console.ReadLine(), out ch);
+            UserAnswer = ch;
+
+        }
+    }
+
+ public class MultiChoiceQuestion : Question
+    {
+        public int[] CorrectAnswer { get; set; }
+        public int[] UserAnswer { get; set; }
+
+        public MultiChoiceQuestion()
+        {
+            CorrectAnswer = new int[3];
+            UserAnswer = new int[3];
+        }
+        public override bool IsCorrect
+        {
+            get {
+                return CorrectAnswer[0] == UserAnswer[0]
+                      && CorrectAnswer[1] == UserAnswer[1]
+                         && CorrectAnswer[2] == UserAnswer[2];
+            }
+        }
+
+        public override void Display()
+        {
+            Console.WriteLine(QuestionText);
+            Console.WriteLine("1. " + Answer1);
+            Console.WriteLine("2. " + Answer2);
+            Console.WriteLine("3. " + Answer3);
+            Console.WriteLine("Enter your three choices : ");
+            int ch;
+            for (int i = 0; i < 3; i++)
+            {
+                int.TryParse(Console.ReadLine(), out ch);
+                UserAnswer[i] = ch;
+            }
+
+        }
+    }
+
+public class BlanksQuestion : Question
+    {
+        public string CorrectAnswer { get; set; }
+        public string UserAnswer { get; set; }
+
+        public override bool IsCorrect
+        {
+            get { return CorrectAnswer == UserAnswer; }
+        }
+        public override void Display()
+        {
+            Console.WriteLine(QuestionText);
+            Console.WriteLine(Answer1);
+            Console.WriteLine(Answer2);
+            Console.WriteLine(Answer3);
+            Console.WriteLine("Enter your answer : ");
+            UserAnswer = Console.ReadLine();
+        }
+    }
+
+Ans now, write following code in Main:
+
+
+  Question[] ques = new Question[5];
+
+ ques[0] = new SingleChoiceQuestion() { QuestionText="First", Answer1="One", Answer2="Two", Answer3="three", CorrectAnswer=1 };
+            ques[1] = new MultiChoiceQuestion() { QuestionText="Second", Answer1="2", Answer2="II", Answer3="5-3", CorrectAnswer= new int[]{1,1,1} };
+            ques[2] = new MultiChoiceQuestion() { QuestionText = "Three", Answer1 = "3", Answer2 = "III", Answer3 = "5-3", CorrectAnswer = new int[] { 1, 1, 0 } };
+            ques[3] = new BlanksQuestion() { QuestionText="What is __?", Answer1="this", Answer2="That", Answer3="it", CorrectAnswer="it" };
+            ques[4] = new SingleChoiceQuestion() { QuestionText = "How many...", Answer1 = "1", Answer2 = "2", Answer3 = "4", CorrectAnswer = 2 };
+
+            int totalCorrect = 0;
+            foreach (var q in ques)
+            {
+                q.Display();
+                if (q.IsCorrect)
+                    totalCorrect++;
+            }
+
+            Console.WriteLine("Total correct :" + totalCorrect);
+
+
+Example: Language and its sub-classes
+
+ public abstract class Language
+    {
+        public string Text { get; set; }
+        public abstract void Speak();
+    }
+    public class English : Language
+    {
+        public override void Speak()
+        {
+            Console.WriteLine("Translating [" + Text   + "] to English");
+        }
+    }
+    public class Hindi : Language
+    {
+        public override void Speak()
+        {
+            Console.WriteLine("Translating [" + Text + "] to Hindi");
+        }
+    }
+
+   class Program
+    {
+        static void Main()
+        {
+            Language[] languages = new Language[4];
+            languages[0] = new English() { Text="Hello" };
+            languages[1] = new Hindi() { Text = "Nameste" };
+            languages[2] = new English() { Text = "Hi!" };
+            languages[3] = new Hindi() { Text = "Kaiseho" };
+
+            foreach (var l in languages)
+            {
+                l.Speak();
+            }
+
+        } 
+    }
+
+sealed modifier  (Not inherited class)
+======================================
+
+The sealed keyword prevent a class being super-class.
+
+public sealed class Utility 
+{
+
+}
+
+partial modifier
+========================================
+The partial keyword allow us to split the definition of class in two or more code files.
+
+
+Example:
+a1.cs
+=======
+public class Employee
+{
+    public int Age {get;set;}
+}
+
+a2.cs
+=========
+public partial class Employee
+{
+   public string Name {get;set;}
+ }
+
+a3.cs
+========
+class MainApp
+{
+   static void Main()
+   {
+    Employee e=new Employee();
+    e.Age = 90;
+    e.Name = "Abc";
+    }
+}
+
+The main application of "partial" keyword is to split C# class code into two or more .cs files.
+
+
+
+static class
+========================================================
+The static modifier used with class definition then all members of this class must be "static". You cannot add instance members into static class.
+
+For example:
+
+public static class Hello
+{
+    public static  void Print() { } //Valid
+    public void Show() {} //Invalid
+}
+
+Extension Method
+===============================================================
+Extension method is a static method defined elsewhere in your project and can be attached to a specific datatype or class.
+
+ Syntax :
+
+  public static class ClassName
+   {
+         public static return_type MethodName(this datatype varName)
+          {
+
+           }
+    }
+
+Example:
+
+
+
+class Test
+{
+    static void Main()
+    {
+        string name = "Raj";
+        name.Mr();
+        name = "Reena";
+        name.Miss();
+
+        int no = 10;
+        Console.WriteLine(no.Square());
+        Console.WriteLine(no.Area());
+
+        DateTime dt = DateTime.Now;
+        Console.WriteLine(dt.India());
+        Console.WriteLine(dt.USA());
+    }
+}
+
+public static class MyExtension
+{
+    public static string India(this DateTime dt)
+    {
+        return dt.ToString("dd-MM-yyyy");
+    }
+    public static string USA(this DateTime dt)
+    {
+        return dt.ToString("MM/dd/yyyy");
+    }
+    public static void Mr(this string str)
+    {
+        Console.WriteLine("Mr. " + str);
+    }
+    public static void Miss(this string str)
+    {
+        Console.WriteLine("Miss. " + str);
+    }
+    public static int Square(this int no)
+    {
+        return no * no;
+    }
+    public static double Area(this int no)
+    {
+        return 3.14 * no * no;
+    }
+}

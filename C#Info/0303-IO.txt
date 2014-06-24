@@ -1,0 +1,84 @@
+System.IO
+=====================================================================
+Classes in System.IO expose the File system functions (file, directory, path , drive etc) and device input and output.
+
+
+System.IO.Path class
+=====================
+It has static methods to query the file or directory path.
+
+            string _path = @"x:\test\sample.anc.txt";
+
+            Console.WriteLine(Path.GetDirectoryName(_path));
+            Console.WriteLine(Path.GetExtension(_path));
+            Console.WriteLine(Path.GetFileName(_path));
+            Console.WriteLine(Path.GetFileNameWithoutExtension(_path));
+            Console.WriteLine(Path.GetFullPath(_path));
+            Console.WriteLine(Path.GetPathRoot(_path));
+            Console.WriteLine(Path.GetRandomFileName());
+            Console.WriteLine(Path.GetTempFileName());
+            Console.WriteLine(Path.GetInvalidPathChars());
+            Console.WriteLine(Path.GetInvalidFileNameChars());
+
+            _path = "file  / test.txt";
+            if (_path.IndexOfAny(Path.GetInvalidFileNameChars()) == -1)
+                Console.WriteLine("Valid");
+            else
+                Console.WriteLine("Invalid"); 
+
+
+System.IO.File and System.IO.FileInfo class
+====================================================================
+
+File class has static methods where as FileInfo support instance methods.
+
+FileInfo:
+=========
+FileInfo info = new FileInfo(@"C:\xampp\htdocs\jayesh\C#Info\0303-IO.txt");
+if (info.Exists)
+       Console.WriteLine(info.Length);
+else
+        Console.WriteLine("Not found");
+
+
+File
+=======
+if (File.Exists(@"C:\xampp\htdocs\jayesh\C#Info\0303-IO.txt"))
+        Console.WriteLine("Exists");
+else
+        Console.WriteLine("Not found");
+
+
+Read text content -- all string at once
+===============================================================
+
+string _path = @"C:\xampp\htdocs\jayesh\C#Info\0303-IO.txt";
+if (File.Exists(_path))
+       Console.WriteLine(File.ReadAllText(_path));
+else
+       Console.WriteLine("Not found");
+
+
+Read text file that returns array of string[].
+===============================================================
+string _path = @"C:\xampp\htdocs\jayesh\C#Info\0303-IO.txt";
+if (File.Exists(_path))
+ {
+   foreach (var line in File.ReadAllLines(_path))
+           Console.WriteLine(line);
+ }
+  else
+     Console.WriteLine("Not found");
+
+
+Search "some text"
+================================================================
+string _path = @"C:\xampp\htdocs\jayesh\C#Info\0303-IO.txt";
+if (File.Exists(_path))
+{
+  foreach (var line in File.ReadAllLines(_path)
+                   .Where(x=>x.Contains("File")))
+   Console.WriteLine(line);
+}
+ else
+   Console.WriteLine("Not found");

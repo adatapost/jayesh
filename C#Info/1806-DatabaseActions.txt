@@ -1,0 +1,35 @@
+Create Category and Product tables.
+---------------------------------------------------
+
+1. create table Category
+ (
+    CategoryID  int primary key identity,
+    CategoryName varchar(40)
+ )
+
+2. 
+create table Product
+ (
+    ProductID int primary key identity,
+    ProductName varchar(40),
+    ProductUnit varchar(10),
+    CategoryID int,
+    foreign key (CategoryID) references Category(CategoryID)
+ )
+
+2. Design Master PAge and Three content pages.
+
+   Default.aspx
+   Category.aspx
+   Product.aspx
+
+3. Create Db.cs in App_code folder.
+
+   We will use |DataDirectory| substitute which represents a path of    App_Data folder.
+
+public class Db
+{
+    public static string CnStr = @"Data Source=(LocalDB)\v11.0;AttachDbFilename=|DataDirectory|\AppDb.mdf;Integrated Security=True";
+}
+
+

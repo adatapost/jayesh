@@ -1,0 +1,86 @@
+﻿html,body,div,form,table,h1,h2,h3,h4,h5,h6,fieldset,header,footer,nav,section,article{
+    margin:0px;
+}
+html,body{
+    height:100%;
+}
+body{
+    font-family:sans-serif;
+    font-size:1.4em;
+    line-height:1.5em;
+}
+#main{
+ width:1200px;
+ margin-left:auto;
+ margin-right:auto;
+ height:100% !important;
+}
+form {
+ height:80%;
+}
+#header{
+  background:#d33;
+  color:white;
+}
+#nav{
+    background:#34f;
+    color:white;
+    padding:4px;
+}
+#nav a{
+    color:white;
+    padding:4px;
+}
+#content{
+    height:100% !important;
+}
+#footer{
+ background:#d33;
+  color:white;
+}
+#footer p{
+    text-align:center;
+}
+
+.fl{
+    float:left;
+}
+.fr{
+    float:right;
+}
+.clear {
+    clear:both;
+}
+.pad5{
+    padding:5px;
+}
+.border-black{
+    border:1px solid black;
+}
+.shadow-text{
+    text-shadow:3px 3px 3px #aaa;
+}
+#left-pane{
+    width:30%;
+    height:100% !important;
+    border-right:1px solid black;
+}
+
+#right-pane{
+    
+}
+
+fieldset {
+    display: inline-block;
+    padding: 10px;
+}
+fieldset label{
+    display:inline-block;
+    width:100px;
+    text-align:right;
+    padding-right:5px;
+}
+fieldset input[type='text']{
+    padding:4px;
+    min-width:200px;
+}

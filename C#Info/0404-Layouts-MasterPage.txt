@@ -1,0 +1,20 @@
+MasterPage
+======================================================================
+MasterPage or LayoutPage is for consistent layout of web-site. The MasterPage offer two sections -- one is static which available to all pages and another is dynamic that is for content page so the content page can add page specific content.
+
+
+The Master page has .master extension and it cannot be requested like .aspx page. MasterPage uses <%@Master%> directive where page .aspx page uses <%@Page %>.
+
+The System.Web.UI.MasterPage is the super class of all master pages.
+
+The Master page markup (html/css/aspx.net controls) contains at least two "ContentPlaceHolder" controls -- Once at <head runat="server"> and another at <form runat="server">.
+
+The ContentPlaceHolder controls are for content-pages to add page-specific content. It means these controls are acts as a "void" for child pages or content pages.
+
+The content page is a page which is derived from Masterpage.
+
+To create a content-page,
+
+   => Add new Item + .aspx page + [x] Select Master Page
+
+   => Set Title="Home" attribute of content page

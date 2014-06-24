@@ -1,0 +1,415 @@
+C# Object Oriented Paradigm
+====================================================================
+
+The "class" keyword
+===================
+
+The "class" keyword define a new reference datatype. The general syntax of class definition:
+
+ access_modifier class ClassName : SuperClass, Interface1,2,.... {}
+
+In other words, a class is an object template (structure). Class definition contains "data-structure" and methods (functions).
+
+
+Basically a class definition include two types of members:
+
+  1. static members and
+  2. instance members
+
+[Note: static means global or application scope life.]
+
+static members
+==============
+
+The "static" keyword (modifier) will be used to define static members. static keyword if used with fields (data-members) then they are allocated automatically once when your class is touched/used very first time in your application.
+
+In C# we will use ClassName.MemberName syntax to access static members.
+
+Instance members
+================
+Members in a class created/declared without static modifiers are instance members. Instance memmbers are allocated when the "new" keyword is used with following syntax:
+
+     varName = new ClassName(); Or
+
+               new ClassName();
+
+
+  Instance of a class also known as "object" or "heap" is referenced through a reference variable whose size will be 4 bytes (for 32 bit machine) and 8 bytes (for 64 bit machine).
+
+
+Valid value of any reference variable will be either null or reference of an object.
+
+
+Example:
+
+public class Test
+{
+   //static field
+
+   public static int no;
+
+   //instance field
+
+   public int no1;
+ 
+}
+
+public class MainTest
+{
+   static void Main()
+   {
+         Console.WriteLine(Test.no); //0
+         //Console.WriteLine(Test.no1); //Error
+
+         Test n = new Test(); // "n" reference variable
+                              //The "new" keyword allocate memory
+                              //for instance members of class.
+
+         Test m = new Test(); 
+         Test.no = 100;
+
+         Console.WriteLine( n==m); //false
+         n.no1 = 10;
+         m.no1 = 40;
+         Console.WriteLine(n.no1 + " " + m.no1 + " " + Test.no);
+    
+    }
+}
+
+
+
+Best practices
+===============
+
+1. Use "PascalCase" for public entities (Namespace, class, member)
+2. Use lowercase or camelCase for private or protected entities.
+3. Use lowercase or camelCase for local variables.
+4. Field (static/instance) must be private to prevent data-injection.
+5. Define public methods to encapsulate the private fields (or    sensitive data) 
+6. Always add appropriate number of constructors to initialize the    fields and also add startup code.
+
+   There are two types of constructors :
+         1. static constructor and 
+         2. instance constructor
+
+    Name of both types of constructor must be name of its class name however, the static constructor must have private access without parameters.
+
+Default constructor:  Every class must have a constructor. If we do not 
+====================  define it then the C# compiler will insert an
+		      empty one is called "default" constructor.
+
+
+Static constructor :  Static constructor will be called implicitly and 			once when a class is used in your application
+===================     very first time.
+
+                      It is mainly used to initialize "static" members.
+
+
+Instance constructor: It initialize the instance members and also add                        instance specific initialization code.
+
+
+using System;
+public class Test
+{
+    static Test()
+    {
+        Console.WriteLine("Static constructor");
+    }
+
+    public Test()
+    {
+        Console.WriteLine("Instance Constructor - No argument");
+    }
+    public Test(int no)
+    {
+        Console.WriteLine("Instance Constructor - int argument");
+    }
+
+}
+
+public class MainTest
+{
+    static void Main()
+    {
+        Test a = new Test(1);
+        Test b = new Test();
+        new Test();
+        new Test(320);
+
+    }
+}
+
+Singleton class pattern or factory class pattern
+==============================================================
+Q : Class allow only one instance per application -- Singleton
+
+public class Test
+{
+    private Test() {}
+
+    private static Test single = null;
+
+    public static Test GetInstance()
+      {
+            if(single == null) {
+               single = new Test();
+            }
+           return single;
+      } 
+}
+
+class MainTest
+{
+  static void Main()
+   {
+       Test a = Test.GetInstance();
+       Test b = Test.GetInstance();
+
+        Console.WriteLine(a==b);
+
+    }
+}
+
+Q : Class's static method returns new instance each time -     factory pattern.
+
+
+using System;
+
+public class TestFactory
+{
+    private TestFactory() { }
+ 
+    public static TestFactory NewInstance()
+    {
+        return  new TestFactory();
+        
+    }
+}
+
+class MainTest
+{
+    static void Main()
+    {
+        TestFactory a = TestFactory.NewInstance();
+        TestFactory b = TestFactory.NewInstance();
+         
+        Console.WriteLine(a == b);
+
+    }
+}
+
+Example: Always write initialization code to prevent NRE (NullReferenceException).
+
+using System;
+
+public class Student
+{
+    //fields
+    private  int roll=0;   //inline initialization
+    private string name="";
+
+    //intialize the fields
+    public Student()
+    {
+    }
+
+    public Student(int roll, string name)
+    {
+        SetRoll(roll);
+        SetName(name);
+    }
+    //methods -- Method encapsulation
+
+    public void SetRoll(int roll)  //Setter
+    {
+        if(roll>=1 && roll<=100)
+            this.roll = roll;
+    }
+    public int GetRoll()  //Getter
+    {
+        return roll;
+    }
+
+    public void SetName(string name)
+    {
+        if (string.IsNullOrEmpty(name))
+            return;
+
+        if (name.Length >= 1 && name.Length <= 50)
+            this.name = name;
+ 
+    }
+    public string GetName() { return name; }
+
+}
+class MainTest
+{
+    static void Main()
+    {
+        Student s = new Student(-10,"dfdsfdsfds");
+        s.SetRoll(100);
+       
+        s.SetName(null);
+
+
+        Console.WriteLine(s.GetRoll() + " " + s.GetName());
+        Console.WriteLine(s.GetName().Length);
+
+    }
+}
+
+In above example, we've created GetXXXXX() and SetXXXXX() methods to get value from the fields or set value to the fields -- These methods are also known as "Getter and Setter" methods.
+
+
+In C#, there is an elegant way to define "Getter/Setter" which increase the developer's productivity. This elegant method is known as "Property".
+
+ General Syntax
+ ===============
+
+
+accessmodifier typename PropertyName
+{
+  get
+    {
+      .....//returns value
+    }
+  set
+   {
+      //assign value to field
+
+   }
+}
+
+Note that the returntype of get accessor and parameter of set accessor will be the typename specified at property definition.
+
+The "get" accessor must returns a value.
+
+The "set" accessor has automatic (implicit) parameter name called "value".
+
+Example:
+
+using System;
+
+public class Student
+{
+    //fields
+    private  int roll=0;   //inline initialization
+    private string name="";
+
+    //properties
+
+    public int Roll
+    {
+        set
+        {
+            if(value>=1 && value<=100)
+                roll = value;
+        }
+        get
+        {
+            return roll;
+        }
+    }
+
+    public string Name
+    {
+        get { return name; }
+        set
+        {
+            if (string.IsNullOrEmpty(value))
+                return;
+            name = value;
+        }
+    }
+}
+class MainTest
+{
+    static void Main()
+    {
+        Student s = new Student();
+        s.Roll = 90;  //Set accessor will be invoked
+        s.Name = "Abc";
+
+        Console.WriteLine(s.Roll); //get accessor will be invoked
+        Console.WriteLine(s.Name);
+    }
+}
+ 
+Example: Roll,Name, English, Science, and Maths properties.
+
+Write Readonly properies (only get) - Total and Percentage.
+
+
+using System;
+
+public class Student
+{
+    //fields
+    private  int roll=0;   //inline initialization
+    private string name="";
+    private int eng, math, sci;
+
+    //properties
+
+    public int English { get { return eng; } set { eng = value; } }
+    public int Maths { get { return math; } set { math = value; } }
+    public int Science { get { return sci; } set { sci = value; } }
+
+
+    public int Total
+    {
+        get
+        {
+            return math + eng + sci;
+        }
+    }
+
+    public double Percentage
+    {
+        get
+        {
+            return Total / 3.0;
+        }
+    }
+    public int Roll
+    {
+        set
+        {
+            if(value>=1 && value<=100)
+                roll = value;
+        }
+        get
+        {
+            return roll;
+        }
+    }
+
+    public string Name
+    {
+        get { return name; }
+        set
+        {
+            if (string.IsNullOrEmpty(value))
+                return;
+            name = value;
+        }
+    }
+}
+class MainTest
+{
+    static void Main()
+    {
+        Student s = new Student();
+        s.Roll = 90;  //Set accessor will be invoked
+        s.Name = "Abc";
+        s.English = 90;
+        s.Maths = 56;
+        s.Science = 77;
+
+        Console.WriteLine(s.Roll); //get accessor will be invoked
+        Console.WriteLine(s.Name);
+        Console.WriteLine(s.Total + " " + s.Percentage);
+    }
+}
+
+ 

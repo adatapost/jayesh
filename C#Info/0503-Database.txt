@@ -1,0 +1,118 @@
+Database API
+====================================================================
+
+The .net framework has an API to expose the functionalities of any database product including MySql, MSSQL, Oracle, Db2, ODBC (Access, Excel, CSV ) etc.
+
+The System.Data namespace and System.Xml namespace have classes/types to work with data and databases.
+
+The classes from these two namespaces are commonly known as ADO.NET - Active DataSet Object.
+
+ADO.NET class library is designed in such way that different database products can be accessed or used using sigle set of methods/properties.
+
+There are two different set of classes in ADO.NET:
+
+  1. Provider classes - They are used to connect with database, execute
+			SQL queries and return results.
+
+  2. Relational Or DataSet classes - These classes represent data into      RAM - in-memory representation of data just like database and 
+     tables.
+
+ Provider classes
+ ================
+  
+ These classes are designed using different products -- oracle, MSSQL  server etc.  
+
+  Suppose if you wish to use Oracle product then you must have to      download ODP.NET (bundle of provider classes) from oracle site.
+
+  If you want to use MySql then download the .net-mysql connector API   from mysql site.
+
+  If you wish to use MSSQL Server (that is product of Microsoft) then   you don't have download seperately -- Provider classes are installed    with default installation of framework.
+
+  If you wish to use ODBC databases -- Ms-Access, Foxpro, CSV, Excel etc then there is provider API called "OleDb" and 'Odbc" exists with default installation.
+
+  So all these "provider" API are mantained by the database vendor as   per ADO.NET specification.
+
+  Presentaly available provider API in framework :
+
+        1. System.Data.SqlClient namespace (SqlClient Provider)
+        2. System.Data.Odbc 
+        3. System.Data.OleDb
+
+   In System.Data, we have standard interfaces which are used to prepare "provider" APIs and all these implementation have common set of methods and properties except their class-names are different.
+
+   System.Data.IDbConnection, System.Data.IDbCommand and many more    interfaces are implemented by the "Providers".
+
+   All the implementation of IDbxxxxxxx interfaces also implement   IDisposable interface to properly cleanup the ADO.NET Resources   (object).
+  
+  If resources  (objects) are not disposed gracefully then your application might a victim of "memory-leak" -- it degrade the database I/O performance and also abruptly shutdown the programs / OS.
+
+  NOTE: Never leave ADO.NET resource without disposing. So always wrap your ADO.NET objects with "using" block.
+
+
+Common Methods and properties of IDbConnection (Connection class)
+==================================================================
+1. ConnectionString = To set connect info so we can establish database
+			session using "Open()" method.
+2. Open() = To establish a database connection.
+3. Close() = To terminate a database connection but it is not released 		yet.
+4. Dispose() = To dispose the ADO.NET resource.
+
+
+Common MEthods and Properties of IDbCommand
+====================================================================
+Object of Command class is used to define "SQL" statement (query) and execute it.
+
+1. Connection = This property set/get connection object references.
+2. CommandText = This property set/get SQL statement.
+3. Parameters = To bind "query" parameters with value.
+4. int ExecuteNonQuery() -- This method execute non-queries (other than 			   select statement) and returns count of 			   affected rows.
+			   It returns -1 if no such row is affected.
+5. object ExecuteScalar() -- This method execute SELECT statement and 				returns value from 1st row and 1st col.
+
+				This method alway returns single value
+				or null.
+
+6. IDataReader ExecuteReader() -- This method execute "SELECT" 			statement and returns database cursor (result)
+			encapsulating it in instance of IDataReader.
+
+
+Common Methods and Proeprties of IDataReader
+==================================================
+1. bool Read() == It reads a row from database and returns true if that 		  row contains data, returns false otherwise.
+2. [column_name| column_ordinal] - This property returns value from 			given column name or column ordinal.
+
+3. XXXXX GetXXXXX(column_ordinal) -- It returns value from given column
+			ordinal.
+
+4. FieldCount = This property returns count of columns.
+
+
+Command methods/properties of IDbDataAdapter
+===================================================
+
+The "DataAdapater" class consists Four "IDbCommand" objects namely -- InsertCommand, UpdateCommand, DeleteCommand and SelectCommand. This class is used to work with "DataSet" or "Relational" class.
+
+This class also called "Helper" class which reads data from database and store into "DataSet" and also update the database from "DataSet".
+
+
+MSSQL Server 2010 Express Edition (Free)
+===================================================================
+
+ MSSQL Server 2010 ship with VS2012 and it has:
+
+       servername = (localdb)\v11
+   [Note: MSSQL 2005/2008, the name of server will be SQLEXPRESS]
+
+ You can design database using VS or SQL Server Management Studio.
+
+       Database file = There are two types of "database":
+			1. Local database which will be stored
+			   into project folder and it is used by
+			   the single application only.
+			2. Remote database which is stored at HOME_OF_MSSQL server (c:\Program Files\Microsoft SQL Server) OR HOME_OF_LOGGED_USER (c:\Users\xxxxxx) and it is shared by number of users/application.
+
+			There will be two files created - .mdf (Master database file) and .ldf (log database file) with each database you create. Log file contains transaction and control data.
+
+
+
+

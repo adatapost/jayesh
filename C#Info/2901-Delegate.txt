@@ -1,0 +1,204 @@
+delegate 
+==================================================================
+The "delegate" is reference type and it stores reference of methods. (In C/C++ we can say it is function pointer, In JavaScript, it is closure).
+
+General Syntax:
+
+  access_modifier delegate return_type DelegateTypeName(argument...);
+ 
+Signature or syntax of delegate type must match with the singnature of function/method to represent a reference. 
+
+Example:
+
+//Delegate Type definition
+public delegate void HelloDelegate();
+
+class Best
+{
+    public void Show()
+    {
+        Console.WriteLine("Show of Best");
+    }
+}
+
+class Test
+{
+    public static void Print()
+    {
+        Console.WriteLine("Print of Test");
+    }
+    static void Main()
+    {
+        Best best = new Best();
+
+        //declare delegate reference variable
+        HelloDelegate refVar;
+        
+        //Assign/add method reference 
+        refVar = Test.Print;
+        refVar(); //Invoke method
+        refVar = best.Show;
+        refVar(); //Invoke method
+    }
+}
+
+Delegate reference variable "HelloDelegate refVar" can store memory reference of one or more methods and this technique is called "MultiCast".
+ 
+   +=  and -= operators are used to add and remove method reference    respectively.
+
+Example:
+
+//Delegate Type definition
+public delegate void HelloDelegate();
+
+class Best
+{
+    public void Show()
+    {
+        Console.WriteLine("Show of Best");
+    }
+}
+
+class Test
+{
+    public static void Print()
+    {
+        Console.WriteLine("Print of Test");
+    }
+    static void Main()
+    {
+        Best best = new Best();
+
+        //declare delegate reference variable
+        HelloDelegate refVar;
+        
+        //Multicast -- To add one or more method references
+        refVar = Test.Print;
+        refVar += best.Show;
+        refVar += Test.Print;
+        refVar += Test.Print;
+        refVar += best.Show;
+
+        refVar(); //Invoke methods
+
+        Console.WriteLine("Removing.....");
+
+        refVar -= Test.Print;
+        refVar -= best.Show;
+        refVar();
+    }
+}   
+
+
+Where and when a "Delegate" type is used?
+===========================================
+
+ 1. Event handling
+ 2. Store references of methods to create a batch or schedule a task.
+ 3. To define anonymous or nameless functions. 
+
+  Anonymous Methods/functions
+  -----------------------------
+   Two syntax are used to define anonymous function:
+
+    1.   DelegateType varName = delegate(arguments.....)
+          {
+               ........
+           };
+
+    2.  This syntax is known as "Lambda" syntax
+        DelegateType varName = (arg....) =>
+         {
+
+          };
+
+Example:
+
+public delegate void MathDelegate(int no1,int no2);
+
+class Test
+{
+    static void Main()
+    {
+        MathDelegate add = delegate(int no1, int no2)
+        {
+            Console.WriteLine(no1 + no2);
+        };
+
+        MathDelegate mul = (no1, no2) =>
+            {
+                Console.WriteLine(no1 * no2);
+            };
+
+        MathDelegate sub = (p, q) => Console.WriteLine(p - q);
+
+        add(2, 5);
+        mul(6, 5);
+        sub(66, 7);
+
+    }
+}
+
+
+Event using delegate 
+===================================================================
+ 
+In order to define an event (and it should be public), we first need to create a "DelegateType".
+
+Example: I've "Test" class having "No" property. Now I want to define an event that will be raised when value of "No" is changed.
+
+//Delegate type
+public delegate void MyEventHandler(int oldValue,int newValue);
+
+public class Test
+{
+    int _no;
+    //Declare an event
+    public  event  MyEventHandler Changed;
+
+    public int No
+    {
+        get { return _no; }
+        set
+        {
+            if (Changed != null)
+            {
+                //Raise an event
+                Changed(_no, value);
+            }
+            _no = value;
+
+
+        }
+    }
+
+}
+ 
+class MainApp
+{
+    static void Main()
+    {
+        Test a = new Test();
+         a.Changed += Abc;  //To add reference of method (event handler)
+        a.Changed += Pqr;
+        a.No = 10;
+        a.No = 40;
+        a.Changed -= Abc;
+        a.No = 55;
+        a.No = 54;
+        
+    }
+
+    //Event handlers
+    static void Abc(int oldValue, int newValue)
+    {
+        Console.WriteLine("Value changed");
+    }
+    static void Pqr(int oldValue, int newValue)
+    {
+        Console.WriteLine("New value " + newValue + " replaces " + oldValue);
+    }
+    
+}
+   
+

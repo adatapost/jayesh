@@ -1,0 +1,31 @@
+Text Controls
+===================================================================
+1. Label   
+2. TextBox
+3. Literal
+
+
+Label displays static text that is wrapped around <span>.
+TextBox has TextMode property to change Single,Password,Multiline (TextArea), Date,Color etc.
+Literal - It insert text into the page. Any text you've added into .aspx page is known as Literal.
+
+<h1>Hello</h1>
+Hi    <----
+Hello <--literal
+
+
+TextBox properties
+===================
+AccessKey -- To set focus when alt + key is pressed (browser specific)
+
+AutoCompleteType = Disabled | Value -- To turn off auto-complete choose 		   disabled option.
+
+AutoPostBack = false -- This feature turn on form submit when textbox 			value is changed.
+
+Columns = n (number of char which decide the length of textbox)
+Rows = n for multiline
+MaxLength =  0 (unlimited text)
+
+
+
+

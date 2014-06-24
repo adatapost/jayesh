@@ -1,0 +1,151 @@
+Data Binding
+================================================================
+DataBinding is way to assign data to the controls properties. DataBinding can be simple or complex.
+
+ Simple DataBinding involes setting single or multiple properties of control via declarative way (Assign data via .aspx markup).
+
+ Simple DataBinding uses followig syntax to bind the public properties:
+
+  <%# Obj.PropertyName %>
+
+ For Example:
+
+   <asp:Label runat="server" 
+              id="label1"
+              Text='<%# DateTime.Now %>'/>
+
+ Assining data/property to the control in above mentioned method is called binding. Now after data-binding, you have to tell the Page or controls itself to execute the binding-expression by calling "DataBind()" method.
+
+    DataBind(); //Page class method   -- will execute all binding 		 expressions on a page.
+
+
+    ControlID.DataBind();  //It execute its own binding-expressions.
+
+Example:
+
+1. Add PAge1.aspx with following markup
+
+   <asp:Label ID="Label1"
+             runat="server" 
+             Text="<%# DateTime.Now %>"></asp:Label>
+
+          <asp:Button ID="Button1"
+             runat="server" 
+              BackColor="<%# MyColor %>"
+             Text="<%# DateTime.Now %>"></asp:Button>
+
+
+2. Call DataBind method of Button1 or Label1 Or Page.DataBind()
+
+  protected void Page_Load(object sender, EventArgs e)
+    {
+        //Label1.DataBind();
+
+        DataBind();
+    }
+
+
+
+Complex DataBinding
+=====================================================================
+
+Complex DataBinding basically used to populate complex output. For example GridView (number of rows and columns from data source), List controls.
+
+ List Control DataBinding
+ ========================
+
+ Four main properties called 
+
+   1.DataSource = Reference of IEnumerable object
+   2.DataTextField = "Name" of column or property whose data is to be
+			displayed and stored "Text" of ListItem.
+   3. DataValueField = "Name" or colu or property whose data is to be
+			stored at "Value" of ListItem.
+   4. DataBind() -- To execute the binding expression
+
+
+Example: Create Product class
+
+public class Product
+{
+    public int ID { get; set; }
+    public string Name {get;set;}
+}
+
+1. Add PAge1.aspx
+  
+   DropDownList1
+   Button1
+   Label1,Label2
+
+2. Write following in code-behind:
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            List<Product> products = new List<Product>()
+            {
+                 new Product(){ ID=10, Name="Pencil"},
+                 new Product(){ ID=11, Name="Pen"},
+                 new Product(){ ID=12, Name="Book"},
+            };
+
+            DropDownList1.DataSource = products;
+            DropDownList1.DataTextField = "Name";
+            DropDownList1.DataValueField = "ID";
+            DropDownList1.DataBind();
+
+        }
+    }
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+        Label1.Text = DropDownList1.SelectedItem.Text;
+        Label2.Text = DropDownList1.SelectedValue;
+    }
+
+Example: Insert "***Select***" at 0th index in DropDownList items.
+
+ if (!IsPostBack)
+        {
+            List<Product> products = new List<Product>()
+            {
+                 new Product(){ ID=10, Name="Pencil"},
+                 new Product(){ ID=11, Name="Pen"},
+                 new Product(){ ID=12, Name="Book"},
+            };
+
+            DropDownList1.DataSource = products;
+            DropDownList1.DataTextField = "Name";
+            DropDownList1.DataValueField = "ID";
+            DropDownList1.DataBind();
+
+            //Insert a new item at 0 index
+            DropDownList1.Items.Insert(0, new ListItem("***Select***", "0"));
+        }
+
+
+Complex binding with Data Controls - GridView, FormView,DatgaList,ListView,Repeater etc
+---------------------------------------------------------------------
+ 
+Example:
+
+1. Add Page1.aspx
+
+   GridView1 (From Data section)
+
+2. Code in Page_load:
+
+if (!IsPostBack)
+        {
+      List<Product> products = new List<Product>()
+       {
+                 new Product(){ ID=10, Name="Pencil"},
+                 new Product(){ ID=11, Name="Pen"},
+                 new Product(){ ID=12, Name="Book"},
+            };
+     GridView1.DataSource = products;
+     GridView1.DataBind();
+  }
+
+The Complex DataBinding uses two functions implicitly and these are Eval("PropertyName","format") and Bind("PropertyName","Format").

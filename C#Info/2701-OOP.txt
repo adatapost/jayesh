@@ -1,0 +1,325 @@
+Inheritance (continue)
+====================================================================
+
+Understanding the super and sub-class constructors and their execution
+----------------------------------------------------------------------
+ 
+ Constructors of super class cannot be inherited by sub-class instead they are requested or called before the execution of derived class constructors.
+
+Example:
+
+public class A
+{
+
+    public A()
+    {
+        Console.WriteLine("A:: No Arg");
+    }
+    public A(int n)
+    {
+        Console.WriteLine("A:: Int Arg");
+    }
+}
+
+public class B : A
+{
+    public B()
+    {
+        Console.WriteLine("B:: No Arg");
+    }
+    public B(int n)
+    {
+        Console.WriteLine("B:: Int Arg");
+    }
+    public B(string n)
+    {
+        Console.WriteLine("B:: String Arg");
+    }
+}
+
+class Test
+{
+    static void Main()
+    {
+        B x = new B();
+        B y = new B(10);
+        B z = new B("Hello");
+    }
+}
+
+
+By default super's no argument constructor will be executed before the execution of sub-class constructor ---- because sub-class is nothing but new version of "super class" so first of all an object of super class will be created.
+
+So what will happen when super class has only argument constructors?
+
+ You can't compile it. We need to use "base" keyword to request super's constructor explicitly.
+
+ public DerivedClass() : base() {}
+
+
+Example:
+
+
+public class A
+{ 
+    public A(int n)
+    {
+        Console.WriteLine("A:: Int Arg");
+    }
+}
+
+public class B : A
+{
+   
+    public B() : base(0)
+    {
+        Console.WriteLine("B:: No Arg");
+    }
+    public B(int n) : base(n)
+    {
+        Console.WriteLine("B:: Int Arg");
+    }
+    public B(string n) : base(0)
+    {
+        Console.WriteLine("B:: String Arg");
+    }
+}
+
+class Test
+{
+    static void Main()
+    {
+        B x = new B();
+        B y = new B(10);
+        B z = new B("Hello");
+    }
+}
+
+
+Object Casting
+================================================================
+
+When we creates an object of sub-class then there will be  objects of its super-classes.
+
+public class A
+{
+    public int no;
+}
+public class B: A
+{
+    public int no;
+}
+
+public class C: B
+{
+    public int no;
+}
+
+ 
+
+class Test
+{
+    static void Main()
+    {
+        C cObj = new C(); //Four object of Object,A, B and C
+        cObj.no = 10;
+
+        //Casting - To select object reference of super class object from sub-class 
+        //object is known as unboxing or implicit casting
+        Object oObj = cObj;
+        A aObj = cObj;
+        B bObj = cObj;
+
+        aObj.no = 20;
+        bObj.no = 30;
+
+        Console.WriteLine(aObj.no + "  " + bObj.no + " " + cObj.no);
+
+        //Casting explicitly - To select object reference of sub-class
+        // from super class reference variable.
+        A aa = new C(); //Four objects
+
+        B bb = (B) aa;
+        C cc = (C)aa;
+
+         
+    }
+}
+
+Solution-1:
+
+     C cObj = new C(); It create objects of  type Object,A, B and C and returns the reference of "C" object because on left hand reference variable is belongs to "C" type.
+
+
+Solution-2:
+
+        Object oObj = cObj; //Reference of Object will be selected
+        A aObj = cObj;      //Reference of A will be selected
+        B bObj = cObj;      //Reference of B will be selected
+
+In Object cast , a super class reference variable can hold reference of  same class object that is created into that hierarchy.
+
+public class A
+{
+    public int no;
+}
+public class B: A
+{
+     public B(int no) { this.no = no; }
+}
+
+public class C: A
+{
+     public C(int no) { this.no = no; }
+}
+ 
+
+class Test
+{
+    static void Main()
+    {
+        A x;
+        B b = new B(10);  // Object, A, B
+        C c = new C(20);  // Object, A, C
+
+        x = b;
+        Console.WriteLine(x.no); // 10
+        x = c;
+        Console.WriteLine(x.no); //20
+     }
+}
+
+
+Exlicit object cast is needed when we want to select object of sub-class.
+
+
+public class A
+{
+    public int no;
+}
+public class B: A
+{
+     public B(int no) { this.no = no; }
+}
+public class C: A
+{
+     public C(int no) { this.no = no; }
+}
+ 
+
+class Test
+{
+    static void Main()
+    {
+        A x = new B(10); // Object, A, B
+
+        C y = (C)x; // Invalid cast because there isn't C in object hierarchy
+        B z = (B)x; // Valid 
+    }
+}
+
+C y = (C) x; This statement wont be exxmined by C# compiler but it throws an exception.
+
+In C# we have two syntax to cast the object explicitly:
+
+  1. () cast operator
+          e.g
+                    C y = (C) x; 
+
+             Will throws an exception on invalid Cast
+
+  2. as operator
+
+           e.g
+
+                C y = x as C;
+
+            This statement returns null if invalid cast occur. Returns             object reference otherwise.
+
+
+Example:
+
+public class A
+{
+    public int no;
+}
+public class B: A
+{
+     public B(int no) { this.no = no; }
+}
+public class C: A
+{
+     public C(int no) { this.no = no; }
+}
+ 
+
+class Test
+{
+    static void Main()
+    {
+        A x = new B(10); // Object, A, B
+
+      //  C y = (C)x; // Invalid cast because there isn't C in object hierarchy
+        C y = x as C;
+        if (y == null)
+            Console.WriteLine("Invalid Cast");
+        else
+            Console.WriteLine("Valid Cast");
+        B z = (B)x; // Valid 
+    }
+}
+
+
+Note: Always use "as" operator to cast object explicitly.
+
+Overriden of methods and abstract method
+====================================================================
+ 
+To override a method means to replace super's virtual method definition by creating new method in sub-class using "override" modifier. 
+
+
+Note that not all methods of super class can be overridden. Only "virtual" and "abstract" methods are overriden.
+
+
+
+public class Language
+{
+    public virtual  void Speak()
+    {
+        Console.WriteLine("...");
+    }
+}
+public class English : Language
+{
+    public override void Speak()
+    {
+        Console.WriteLine("I can speak English");
+    }
+}
+public class Gujarati : Language
+{
+    public override void Speak()
+    {
+        Console.WriteLine("I can speak Gujarati");
+    }
+}
+
+
+class Test
+{
+    static void Main()
+    {
+        Language x = new Gujarati(); // Object, Language,Gujarati
+        x.Speak(); //Dynamic method dispatcher
+        x = new English(); 
+        x.Speak();  //Dynamic method dispatcher
+
+        Speaker(new Gujarati());
+        Speaker(new English());
+     }
+
+    static void Speaker(Language l)
+    {
+        l.Speak();
+    }
+}

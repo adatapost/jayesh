@@ -1,0 +1,111 @@
+FileUpload Control
+==================================================================
+To copy file from client machine to server machine.
+
+Methods & Properties
+--------------------
+1. HasFile -- It returns true if FileUpload control is posted (Submitted) back with    file data. Returns false otherwise.
+
+2. FileName - It returns filename.
+
+3. FileBytes - It reutrns byte array
+
+4. FileBytes.Length -- It returns count of bytes.
+
+Example:
+  Code in Button_Click event:
+
+ if (FileUpload1.HasFile)
+        {
+            Label1.Text = "File is selected " + FileUpload1.FileName + " " + FileUpload1.FileBytes.Length;
+        }
+        else
+        {
+            Label1.Text = "Please select a file";
+        }
+
+5. PostedFile.ContentType - It returns content type of uploaded file.
+
+			e.g image/jpeg, application/pdf
+
+6. SaveAs(absolute_path) -- To save the uploaded file.
+
+
+
+Example: Upload a file.
+
+1. Add FileUpload1, Label1 and Button1
+2. Create "Files" folder under  the application.
+3. Button1_Click code
+
+if (FileUpload1.HasFile)
+        {
+           // Label1.Text = "File is selected " + FileUpload1.FileName + " " + FileUpload1.FileBytes.Length;
+          //  Label1.Text = FileUpload1.PostedFile.ContentType;
+            string vPath = "~/Files/" + FileUpload1.FileName;
+            string rPath = Server.MapPath(vPath);
+            FileUpload1.SaveAs(rPath);
+            Label1.Text = "File uploaded successfully";
+        }
+        else
+        {
+            Label1.Text = "Please select a file";
+        }
+
+Example: Upload image file only and store them into "~/Photo" folder.
+
+if (FileUpload1.HasFile)
+        {
+            string ctype = FileUpload1.PostedFile.ContentType;
+            if (ctype == "image/png" ||
+                 ctype == "image/gif" ||
+                  ctype == "image/jpeg")
+            {
+                string vPath = "~/Photo/" + FileUpload1.FileName;
+                string rPath = Server.MapPath(vPath);
+                FileUpload1.SaveAs(rPath);
+                Label1.Text = "File uploaded successfully";
+            }
+            else
+            {
+                Label1.Text = "Please select image file";
+            }
+        }
+        else
+        {
+            Label1.Text = "Please select a file";
+        }
+
+
+Example: Program to store emp name,birthdate, marital status, website, photo.
+
+
+1. Create Emp table:
+CREATE TABLE [dbo].[Emp] (
+    [EmpID]    INT          NOT NULL IDENTITY,
+    [EmpName]  VARCHAR (40) NULL,
+    [JoinDate] DATETIME     NULL,
+    [MStatus]  BIT          NULL,
+    [Photo]    VARCHAR (30) NULL,
+    PRIMARY KEY CLUSTERED ([EmpID] ASC)
+);
+
+
+
+2. Design the UI
+
+Name : txtEmpName
+Join Date : txtJoinDate
+Marital Status : Merrid () Unmerrid () (txtMStat) RadioButtonList
+Photo : txtPhoto (FileUpload control)
+
+lblMessage (Label)
+
+btnAdd (Button)
+
+3. Create "Photo" folder to save images.
+
+
+
+
+

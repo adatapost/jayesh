@@ -1,0 +1,230 @@
+Example : Paging a grid -- To show n records per page.
+
+1. Add GridView1, configure the templates.
+2. Add Data binding code in Page_Load (As per previous example)
+3. GridView1.AllowPaging = True
+4. GridView1.PageSize = 2 (number of rows to be displayed per page)
+5. GridView1.PagerStyle (for back color,color, alignment).
+6. GridView1.PagerSettings (to change page mode - number, chars,    symbol)
+7. Select GridView1 + Open Property Window + Select Event Tab.
+   +Double click on Page Index Changing
+  
+   Code in .cs file:
+
+public partial class Grid_GridPage : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            BindGrid();
+        }
+    }
+
+    public void BindGrid()
+    {
+        using (SqlConnection cn = new SqlConnection())
+        {
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                cn.ConnectionString = Db.CnStr;
+                cmd.CommandText = "select * from emp";
+                cmd.Connection = cn;
+                cn.Open();
+                using (SqlDataAdapter adp = new SqlDataAdapter(cmd))
+                {
+                    DataTable dt = new DataTable();
+                    adp.Fill(dt);
+                    GridView1.DataSource = dt;
+                    GridView1.DataBind();
+                }
+                cn.Close();
+            }
+        }
+    }
+    protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        GridView1.PageIndex = e.NewPageIndex;
+        //Rebind
+        BindGrid();
+    }
+}
+
+
+
+OR Use List<T> collection to bind the data
+--------------------------------------------
+1. Create Emp.cs
+
+public class Emp
+{
+    public int EmpId { get; set; }
+    public string EmpName { get; set; }
+    public string Site { get; set; }
+    public string Photo { get; set; }
+    public bool  MStatus { get; set; }
+    public DateTime  JoinDate { get; set; }
+
+    public static List<Emp> GetEmps()
+    {
+        List<Emp> list = new List<Emp>();
+        using (SqlConnection cn = new SqlConnection())
+        {
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                cn.ConnectionString = Db.CnStr;
+                cmd.CommandText = "select * from emp";
+                cmd.Connection = cn;
+                cn.Open();
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    while (dr.Read())
+                    {
+                        list.Add(new Emp()
+                        {
+                             EmpId= dr.GetInt32(0),
+                             EmpName =dr.GetString(1),
+                             JoinDate = dr.GetDateTime(2),
+                             MStatus = dr.GetBoolean(3),
+                             Site = dr.GetString(4),
+                             Photo = dr.GetString(5)
+
+                        });
+                    }
+                }
+                cn.Close();
+            }
+        }
+
+        return list;
+    }
+
+}
+
+2. Code in page.aspx.cs file
+------------
+public partial class Grid_GridPageList : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            GridView1.DataSource = Emp.GetEmps();
+            GridView1.DataBind();
+        }
+    }
+    protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        GridView1.PageIndex = e.NewPageIndex;
+        GridView1.DataSource = Emp.GetEmps();
+        GridView1.DataBind();
+    }
+}
+
+
+Example: Sorting feature to sort the database result and show them.
+
+
+1. Add GridView1, Configure column templates
+2. GridView1.AllowSorting = True
+3. Edit each column template and set SortExpression = "possibly column name".
+
+  e.g
+ 
+     BoundField.HeaderText="ID"
+               .SortExpression="EmpID"
+
+
+4. Select GridView1 + Open Property Window + open event tab + Double click on "Sorting" event.
+
+   Code in page.aspx.cs file
+   --------------------------
+protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            GridView1.DataSource = Emp.GetEmps();
+            GridView1.DataBind();
+        }
+    }
+    protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
+    {
+        GridView1.PageIndex = e.NewPageIndex;
+        GridView1.DataSource = Emp.GetEmps();
+        GridView1.DataBind();
+    }
+    protected void GridView1_Sorting(object sender, GridViewSortEventArgs e)
+    {
+        var list = Emp.GetEmps();
+        if (e.SortExpression == "EmpId")
+        {
+            GridView1.DataSource = list.OrderBy(x=>x.EmpId).ToList();
+            GridView1.DataBind();
+        }
+        if (e.SortExpression == "EmpName")
+        {
+            GridView1.DataSource = list.OrderBy(x => x.EmpName).ToList();
+            GridView1.DataBind();
+        }
+        if (e.SortExpression == "JoinDate")
+        {
+            GridView1.DataSource = list.OrderBy(x => x.JoinDate).ToList();
+            GridView1.DataBind();
+        }
+        if (e.SortExpression == "MStatus")
+        {
+            GridView1.DataSource = list.OrderBy(x => x.MStatus).ToList();
+            GridView1.DataBind();
+        }
+    }
+
+
+GridView and  Buttons (ImageButton,Button,LinkButton)
+===================================================================
+
+Buttons or any other control added into Data Controls then their events cannot be handled directly. Instead we have to handle event of "Data Control" on behalf of "child" control and this technique is called "Event-bubbling".
+
+
+
+For Example.
+
+    The RowCommand event will be called/fires when any button is     clicked.
+
+    We've two button's properties namely -- CommandName and     CommandArgument. These properties are used to specify the identity     of button and also data.
+
+
+Example: Grid With Button
+---------------------------
+
+1. Add GridView1,Label1 + Column templates
+2. Add ButtonField and set "CommandName='First'"
+
+    [Note: commandName value can be anything to seperate the button's
+     identity].
+
+3. Handle "RowCommand" Event.
+
+Code in page.aspx.cs
+--------------------
+protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            GridView1.DataSource = Emp.GetEmps();
+            GridView1.DataBind();
+        }
+
+    }
+    protected void GridView1_RowCommand(object sender, GridViewCommandEventArgs e)
+    {
+        Label1.Text = "Button is pressed " + e.CommandName + "  " + e.CommandArgument;
+    }
+
+
+
+
+CommandName return an identified which set to each ButtonField and CommandArgument returns row number begins with 0.
+
+
+   
+

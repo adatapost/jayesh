@@ -1,0 +1,70 @@
+Enum 
+======================================
+Enum is value type and it represents data of int family type (byte, short, int, uint, long or ulong) to create symbolic constants.
+
+First Enum symbol is initiaized with 0 and next is +1 and so on.
+
+public enum Friend
+{
+    Raj,
+    Mohan,Rakesh
+}
+ 
+class Test
+{
+    static void Main()
+    {
+        Console.WriteLine((int)Friend.Raj);
+        Console.WriteLine((int)Friend.Rakesh);
+    }
+}
+
+Example: You can assign integer literal to a sepcific  or all symbols.
+
+public enum Friend
+{
+    Raj=10,
+    Mohan=40,Rakesh
+}
+ 
+class Test
+{
+    static void Main()
+    {
+        Console.WriteLine((int)Friend.Raj);
+        Console.WriteLine((int)Friend.Rakesh);
+    }
+}
+
+You can create variable of Enum type to store any value that Enum represent:
+
+public enum Day
+{
+    Mon,Tue,Wed,Thr,Fri,Sat,Sun
+}
+class Test
+{
+    static void Main()
+    {
+        Day x = Day.Sun;
+        Console.WriteLine(x);
+        Console.WriteLine((int)x);
+    }
+}
+
+Default type of Enum is "int" (System.Int32).
+
+You can define "byte" enum using:
+
+public enum Day :  byte    
+{
+    Mon,Tue,Wed,Thr,Fri,Sat,Sun
+}
+class Test
+{
+    static void Main()
+    {
+        Day x = Day.Sun;
+        Console.WriteLine((byte)x);
+    }
+}

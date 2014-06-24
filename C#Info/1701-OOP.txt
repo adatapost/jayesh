@@ -1,0 +1,407 @@
+Object initialization
+----------------------------------------
+ If a class has set public property then you can initialize an object using following syntax:
+
+  var obj = new ClassName
+   {
+      prop1=value1,
+      prop2=value2,....
+    };
+
+Example:
+     Student s = new Student 
+        {
+             Roll=10, English=99, Maths= 88, Name="ABC", Science=88 
+        };
+
+
+Auto-implemented property
+-------------------------
+
+The C# compiler will create private fields and define public properties implicitly when we declare property using following syntax:
+
+  access_modifier typename PropertyName {get; set;}
+
+Example:
+
+using System;
+
+public class Student
+{
+    public int Roll { get; set; }
+    public string Name { get; set; }
+    public int English { get; set; }
+    public int Science { get; set; }
+    public int Maths { get; set; }
+
+    public int Total
+    {
+        get
+        {
+            return Maths  + English + Science;
+        }
+    }
+
+    public double Percentage
+    {
+        get
+        {
+            return Total / 3.0;
+        }
+    }
+     
+ 
+}
+class MainTest
+{
+    static void Main()
+    {
+        Student s = new Student 
+        {
+             Roll=10, English=99, Maths= 88, Name="ABC", Science=88 
+        };
+        s.Roll = 99;
+
+        Console.WriteLine(s.Roll); //get accessor will be invoked
+        Console.WriteLine(s.Name);
+        Console.WriteLine(s.Total + " " + s.Percentage);
+    }
+}
+
+Example-2
+=========
+using System;
+
+public class Product
+{
+    public int ID { get; set; }
+    public string Name { get; set; }
+    public decimal Rate { get; set; }
+    public decimal Qty { get; set; }
+
+    public decimal Amount { get { return Qty * Rate; } }
+}
+class MainTest
+{
+    static void Main()
+    {
+        Product p = new Product()
+        {
+             ID=10, Name="Pen", Qty=10m, Rate=20m
+        };
+        Console.WriteLine(p.ID + " " + p.Name + " " + p.Rate + " " + p.Qty + " " + p.Amount );
+    }
+}
+
+Composition
+===========
+In fact a class definition contains simple type members as well as complex members (user-defined).
+
+Example-1
+==========
+using System;
+public class Category
+{
+    public int ID { get; set; }
+    public string Name { get; set; }
+}
+public class Product
+{
+    public int ID { get; set; }
+    public string Name { get; set; }
+    public decimal Rate { get; set; }
+    public decimal Qty { get; set; }
+
+    public decimal Amount { get { return Qty * Rate; } }
+    public Category Category { get; set; }
+    public Product()
+    {
+        Category = new Category();
+    }
+}
+class MainTest
+{
+    static void Main()
+    {
+        Product p = new Product()
+        {
+             ID=10, Name="Rotomac", Qty=10m, Rate=20m
+        };
+        p.Category.ID = 10;
+        p.Category.Name = "Pen";
+        Console.WriteLine(p.ID + " " + p.Name + " " + p.Rate + " " + p.Qty + " " + p.Amount );
+        Console.WriteLine(p.Category.ID + " " + p.Category.Name);
+    }
+}
+
+Example:2
+=========
+using System;
+public class Address
+{
+    public string City { get; set; }
+    public string Pin { get; set; }
+    public string Area { get; set; }
+}
+public class Student
+{
+    public int Roll { get; set; }
+    public string Name { get; set; }
+    public Address LocalAddress { get; set; }
+    public Address PostalAddress { get; set; }
+
+    public Student()
+    {
+        LocalAddress = new Address();
+        PostalAddress = new Address();
+    }
+
+}
+class MainTest
+{
+    static void Main()
+    {
+        Student s = new Student();
+        s.Roll = 10;
+        s.Name = "A";
+        s.LocalAddress.City = "Meh";
+        s.LocalAddress.Pin = "344444";
+        s.PostalAddress.City = "Pat";
+        s.PostalAddress.Pin = "555555";
+        s.LocalAddress.Area = "Rambag";
+        s.PostalAddress.Area = "Highway";
+
+
+    }
+}
+
+Example-3   Using simple properties
+===========
+
+using System;
+public class Address
+{
+    private string _city, _pin, _area;
+
+    public string City { get { return _city; } set { _city = value; } }
+    public string Pin { get { return _pin; } set { _pin = value; } }
+    public string Area { get { return _area; } set { _area = value; } }
+}
+public class Student
+{
+    private int _roll;
+    private string _name;
+    private Address _localAddress,_postalAddress;
+    public int Roll { get { return _roll; } set { _roll = value; } }
+    public string Name { get { return _name; } set { _name = value; } }
+    public Address LocalAddress { get { return _localAddress; } set { _localAddress = value; } }
+    public Address PostalAddress { get { return _postalAddress; } set { _postalAddress = value; } }
+
+    public Student()
+    {
+        LocalAddress = new Address();
+        PostalAddress = new Address();
+    }
+
+}
+class MainTest
+{
+    static void Main()
+    {
+        Student s = new Student();
+        s.Roll = 10;
+        s.Name = "A";
+        s.LocalAddress.City = "Meh";
+        s.LocalAddress.Pin = "344444";
+        s.PostalAddress.City = "Pat";
+        s.PostalAddress.Pin = "555555";
+        s.LocalAddress.Area = "Rambag";
+        s.PostalAddress.Area = "Highway";
+    }
+}
+
+Example-3
+==========
+using System;
+
+public class Bank
+{
+    public string Name { get; set; }
+}
+
+public class Customer
+{
+    public string Name { get; set; }
+    public string Address { get; set; }
+}
+
+public class Account
+{
+    public string AccountNo { get; set; }
+    public Bank Bank { get; set; }
+    public Customer Customer { get; set; }
+
+   
+
+}
+
+class MainTest
+{
+    static void Main()
+    {
+        Bank sbi = new Bank() { Name="State Bank Of India (SBI)"};
+        Bank bob = new Bank() { Name = "Bank of Baroda" };
+        Customer c1 = new Customer(){ Name="Raj",Address="12" };
+        Customer c2 = new Customer() { Name = "Man", Address = "aaa" };
+        Account a = new Account();
+        a.AccountNo = "10000";
+       
+        a.Customer = c1;
+        a.Bank = sbi;
+
+        Console.WriteLine(a.AccountNo + " " + a.Bank.Name + " " + a.Customer.Name);
+
+        Account b = new Account() {
+         AccountNo="10002", Bank=bob, Customer=c1
+        };
+        Console.WriteLine(b.AccountNo + " " + b.Bank.Name + " " + b.Customer.Name);
+      
+        b = new Account()
+        {
+            AccountNo = "aaa",
+            Bank = new Bank() { Name = "INCO" },
+            Customer = new Customer() { Name="A", Address="Q" }
+        };
+        Console.WriteLine(b.AccountNo + " " + b.Bank.Name + " " + b.Customer.Name);
+    }
+}
+
+
+
+Example:4
+=========
+using System;
+public class Point
+{
+    public int X { get; set; }
+    public int Y { get; set; }
+}
+
+public class Rect
+{
+    public Point Start { get; set; }
+    public Point End { get; set; }
+
+    public Rect() { Start = new Point(); End = new Point(); }
+}
+
+public class Circle
+{
+    public Point Start { get; set; }
+    public int Radius { get; set; }
+}
+public class Trangle
+{
+    public Point First { get; set; }
+    public Point Second { get; set; }
+    public Point Third { get; set; }
+}
+class MainTest
+{
+    static void Main()
+    {
+        Circle c = new Circle()
+        {
+            Radius = 10,
+            Start = new Point() { X = 100, Y = 150 }
+        };
+
+        Console.WriteLine(c.Start.X + " " + c.Start.Y + " " + c.Radius);
+    }
+}
+
+Example:4
+===========
+using System;
+
+public class Keybaord { }
+public class Mouse { }
+public class Processor { }
+public class Ram { }
+
+public class Computer
+{
+    public Keybaord UsaKey { get; set; }
+    public Mouse PS2 { get; set; }
+    public Processor Processor { get; set; }
+}
+class MainTest
+{
+    static void Main()
+    {
+        
+  
+    }
+}
+
+Inheritance
+===========
+
+It is a way to create a new type(class) from an existing type. The newly defined class is nothing but it is existing one however we can add new attributes to it.
+
+For example,
+
+
+  public class Language {}
+
+  public class English : Language {}
+  public class Gujarati : Language {}
+  public class Kutcchhi : Gujarati {}
+
+
+ Inheritance relationship -- Relationship between two classes is called  inheritance. Inheritance relationship is known as "is-relation".
+
+  English is Language  - True
+  Language is English  - False
+  Gujarati is Kautchhi - False
+
+
+Mouse is HArdware
+SavingAccount is BankAccount
+
+
+General Syntax
+================
+
+ access_modifier class DerivedClass : SuperOrBaseClass {}
+
+   A class must have one and only one direct super-class. If super class is not specified then the C# compiler insert "System.Object" as a super class.
+
+ public class A {}
+
+ Or
+
+ public class A : System.Object {}
+
+
+Why use "inheritance"?
+=======================
+
+  Ans: To create "infrastructure or architecture" classes and these        classes can be used by different developer by extending them.
+
+      For example: System.Web.UI.Page is arch/infra class
+                   System.Window.Forms.Form 
+                   System.Object
+
+      To use "infra" classes.
+
+
+
+
+   
+
+
+
+
+
+ 
