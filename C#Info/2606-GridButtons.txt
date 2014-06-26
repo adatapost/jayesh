@@ -1,0 +1,221 @@
+GridView , Buttons and Events
+======================================================================
+
+Data control's template allow us to add HTML tags, ASP.NET controls and many more. These ASP.NET controls added inside the Data controls wont fire events directly instead the data-control raise them.
+
+
+Magic Buttons
+-------------
+
+
+Data control uses following standard name as "CommandName" to specify the action.
+
+ CommandName	Description
+===================================================
+  Select	It raises SelectedIndexChanging.
+
+  New		It raises  ModeChanging event
+
+  Insert	It raises Item/Row Inserting event
+  
+  Edit		It raises Item/Row Editing event
+  
+  Update   	It raises Item/Row updating event
+
+  Delete	It raises Item/Row delting event
+ 
+  Page		It raises PageIndexChanging event
+
+  Sort		It raises Sorting event
+
+  Cancel	It raises CancellingEdit event
+
+
+  
+   In addiction "Row/ItemCommand" event will be executed as usual.
+
+
+
+Example -- Select Button (CommandName = "Select") [GridButton3.aspx]
+
+
+1. Add GridView1, Set Bound fields
+2. Set GridView1.DataKeyNames = "ColumnName"
+3. Add Button with "Select" commandName.
+4. Add Label1.
+5. Handle GridView's SelectedIndexChanging/Changed event.
+Code:
+
+ protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            GridView1.DataSource = Emp.GetEmps();
+            GridView1.DataBind();
+        }
+    }
+    protected void GridView1_SelectedIndexChanging(object sender, GridViewSelectEventArgs e)
+    {
+        Label1.Text = GridView1.SelectedValue.ToString();
+
+    }
+
+
+
+
+
+
+
+Example: Set two more columns to DataKeyNames to return two or more selected values:
+
+
+1. GridView1.DataKeyNames="EmpId,EmpName"
+
+2. Code:
+
+ protected void GridView1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        int index = GridView1.SelectedIndex;
+
+        string str = GridView1.DataKeys[ index][0].ToString();
+        str = str +  "  " +  GridView1.DataKeys[index][1].ToString();
+        Label1.Text = str;
+    }
+
+
+
+GridView - Edit and Delete  [GridEditDelete]
+====================================================================
+1. Add GridView, Set TemplateField's ItemTemplate and EditItemTemplate.
+
+2. Add "CommandField" -- Edit, Update, Cancel
+   Add "CommandField" -- Delete, Select
+
+3. Edit the 1st TemplateField:
+     1. Add Label1 into ItemTemplate + bind it with "EmpId"
+     2. Add Textbox1 into EditItemTemplate + bind it with "EmpId" 
+     3. Add Label2 into ItemTemplate + bind it with "EmpName"
+     4. Add Textbox3 into EditItemTemplate + bind it with "EmpName" 
+  
+
+4. Set GridView1.DataKeyNames="EmpId" <--- Primary key to delete/update
+
+5. Bind the GridView1
+   protected void Page_Load(object sender, EventArgs e)
+    {
+        if(!IsPostBack)
+        {
+            BindGrid();
+        }
+    }
+    public void BindGrid()
+    {
+        using (SqlConnection cn = new SqlConnection())
+        {
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                cn.ConnectionString = Db.CnStr;
+                cmd.CommandText = "select * from emp";
+                cmd.Connection = cn;
+                cn.Open();
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    GridView1.DataSource = dr;
+                    GridView1.DataBind();
+                }
+                cn.Close();
+            }
+        }
+    }
+
+5. HAndle RowEditing event
+
+ protected void GridView1_RowEditing(object sender, GridViewEditEventArgs e)
+    {
+        GridView1.EditIndex = e.NewEditIndex;
+        //Rebind the GridView
+        BindGrid();
+    }
+
+6. Handle "RowCancelingEdit" event
+
+protected void GridView1_RowCancelingEdit(object sender, GridViewCancelEditEventArgs e)
+    {
+        GridView1.EditIndex = -1;
+        //Rebind the GridView
+        BindGrid();
+    }
+
+
+7. HAndle RowUpdating Event
+
+ In this event will use "TextBox1" and "TextBox2" (empid, and empname)   value to update the record.
+
+ In Data-Control, we will have to call "FindControl" method to get reference of "child" control.
+
+   e.g
+
+TextBox text = GridView1.Rows[0].FindControl("TextBox1") as TextBox;
+
+Or
+
+TextBox text = (TextBox) GridView1.Rows[0].FindControl("TextBox1") ;
+
+
+
+Code:
+
+protected void GridView1_RowUpdating(object sender, GridViewUpdateEventArgs e)
+    {
+        TextBox no = GridView1.Rows[e.RowIndex].FindControl("TextBox1") as TextBox;
+        TextBox name = GridView1.Rows[e.RowIndex].FindControl("TextBox2") as TextBox;
+
+        using (SqlConnection cn = new SqlConnection())
+        {
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                cn.ConnectionString = Db.CnStr;
+                cmd.CommandText = "update emp set empname=@p1 where empid=@p2";
+                cmd.Parameters.AddWithValue("@p1", name.Text);
+                cmd.Parameters.AddWithValue("@p2", no.Text);
+                cmd.Connection = cn;
+                cn.Open();
+                using (SqlDataReader dr = cmd.ExecuteReader())
+                {
+                    GridView1.DataSource = dr;
+                    GridView1.DataBind();
+                }
+                cn.Close();
+
+            }
+        }
+
+        //Rebind the grid;
+        GridView1.EditIndex = -1;
+        BindGrid();
+    }
+
+8. Handle the RowDeleting event
+
+
+ protected void GridView1_RowDeleting(object sender, GridViewDeleteEventArgs e)
+    {
+        string id = GridView1.DataKeys[e.RowIndex][0].ToString();
+        using (SqlConnection cn = new SqlConnection())
+        {
+            using (SqlCommand cmd = new SqlCommand())
+            {
+                cn.ConnectionString = Db.CnStr;
+                cmd.CommandText = "delete from  emp where empid=@p1";
+                
+                cmd.Parameters.AddWithValue("@p1", id);
+                cmd.Connection = cn;
+                cn.Open();
+                cmd.ExecuteNonQuery();
+                cn.Close();
+
+            }
+        }
+        //Rebind the Grid
+        BindGrid();
+    }
