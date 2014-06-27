@@ -1,0 +1,293 @@
+Entity Data Model - EDM
+======================================================================
+EDM is an ORM - Object Relation Mapping Engine (Framework). 
+
+ O - Object - C# Class object or CLR Object
+ R - Relation - Database table.
+
+The ORM engine / famework map the database table's attribute (column) with class properties (fields).
+
+The EDM framework is  a core of the ORM which uses ADO.NET classes implicitly. We just need to tell the EDM what actions we need to perform.
+
+
+The EDM is  set of Types which perform background process including inserting/deleting/updating/fetching rows from database on behalf of the developer.
+
+Why we have to choose EDM over ADO.NET?
+---------------------------------------
+
+  1. We've to use SQL statement and then result of SQL statement is to
+      be stored into objects/list, when we use ADO.NET provider       classes.
+
+      With EDM, we don't have to establish database connection, write       SQL statmenets and so on. It means it offers NoSQL standard.
+
+ 2. The EDM uses lazy mode to fetch the result. It means EMD read data
+     from the database when they are really needed or requested.
+
+     With ADO.NET, we must have to store result into memory (List,      arrays).
+
+  3. With ADO.NET, we have to write complex query to fetch result from      two or more tables.
+
+     EDM manages relationship as per foreign key you've specified      between tables.
+
+
+Naming conventions for database objects - tables & fields
+---------------------------------------------------------
+1. Always use singular table name.
+
+    Product -- OK
+    Products -- Improper
+
+    Plural names are used to define "collections - List<T>".
+
+2. Capitalize the first letter of each word (Do not add underscore or    spaces etc).
+
+
+
+Example:
+
+1. Create/Open website
+2. Add Database - For example - EmpDb.mdf
+3. Add following tables.
+
+CREATE TABLE [dbo].Dept
+(
+	[DeptID] INT NOT NULL PRIMARY KEY IDENTITY, 
+    [DeptName] VARCHAR(50) NULL
+)
+
+CREATE TABLE [dbo].Emp
+(
+	[EmpID] INT NOT NULL PRIMARY KEY IDENTITY, 
+    [EmpName] VARCHAR(50) NULL, 
+    [JoinDate] DATE NULL, 
+    [DeptID] INT NULL, 
+    CONSTRAINT [FK_Emp_ToDept] FOREIGN KEY (DeptID) REFERENCES Dept(DeptID)
+)
+
+4. Add New Item + ADO.NET Entity Data Model -- A designer file called    (Model.edmx) will be created.
+
+  => Choose "Yes" to create .edmx into App_code folder.
+  => Generate From Database + NExt + Next 
+  => [x] Select the Tables + Finish + Save + Close the .edmx designer
+
+
+  
+
+The DbContext - EDM class
+========================= 
+
+This is the primary class responsible to upto date the database. When you create .emdx, a class name "YourDatabaseEntities" will be created.
+
+ e.g  EmpDb is our database then DbContext class name is EmpDbEntities.
+
+
+Example: Add dept record.
+
+        //Create object of XXXXXXEntites class
+        EmpDbEntities db = new EmpDbEntities();
+
+        //Create Entity object - Emp,Dept are called entities / classes
+        Dept dept = new Dept() {  DeptName = "Accounting"};
+        
+        //Submit entity to the EDM
+        db.Depts.Add(dept);
+
+        //Commit the changes
+        db.SaveChanges();
+        Response.Write("Added"); 
+
+
+Example: Add "Emp" record
+
+ //Create object of XXXXXXEntites class
+        EmpDbEntities db = new EmpDbEntities();
+
+        Emp emp = new Emp() { 
+          EmpName="Rajesh Kumar",
+           JoinDate= DateTime.Parse("1-1-2002"),
+            DeptID = 1
+        };
+        db.Emps.Add(emp);
+        //Commit the changes
+        db.SaveChanges();
+        Response.Write("Added");
+
+OR
+
+      //Create object of XXXXXXEntites class
+        EmpDbEntities db = new EmpDbEntities();
+
+        Emp emp = new Emp();
+        emp.DeptID = 1;
+        emp.EmpName = "Munir Shah";
+        emp.JoinDate = DateTime.Parse("12/2/2002");
+        db.Emps.Add(emp);
+        //Commit the changes
+        db.SaveChanges();
+        Response.Write("Added");
+
+
+
+Example: List all rows from Dept (db.Depts)
+
+    EmpDbEntities db = new EmpDbEntities();
+
+        foreach (var dept in db.Depts)
+        {
+            Response.Write("<br/>" + dept.DeptID + " " + dept.DeptName);
+        }
+    }
+Example: List all rows from Emp  (db.Emps)
+
+
+
+ EmpDbEntities db = new EmpDbEntities();
+
+        foreach (var emp in db.Emps)
+        {
+            Response.Write("<br/>" + emp.EmpID + " " + emp.EmpName + " " + emp.JoinDate + " " + emp.Dept.DeptName);
+        }
+
+
+Example: Display depts and emps of each dept.
+
+
+EmpDbEntities db = new EmpDbEntities();
+
+        foreach (var d in db.Depts)
+        {
+            Response.Write("<br/>" + d.DeptName);
+            foreach (var emp in d.Emps)
+            {
+                Response.Write("<br/>" + emp.EmpName + " " + emp.JoinDate);
+            }
+        }
+
+
+
+Example: Search by deptid.
+
+        EmpDbEntities db = new EmpDbEntities();
+
+        var search = db.Depts.Where(x => x.DeptID == 11).FirstOrDefault();
+        if (search != null)
+        {
+            Response.Write(search.DeptID + " " + search.DeptName);
+        }
+        else
+        {
+            Response.Write("Not found");
+        }
+       
+Example: Update dept
+
+
+ EmpDbEntities db = new EmpDbEntities();
+
+        var search = db.Depts.Where(x => x.DeptID == 1).FirstOrDefault();
+        if (search != null)
+        {
+            Response.Write(search.DeptID + " " + search.DeptName);
+
+            search.DeptName = "ABC";
+            db.SaveChanges(); //commit;
+        }
+        else
+        {
+            Response.Write("Not found");
+        } 
+
+
+ 
+Example: Delete dept
+
+ EmpDbEntities db = new EmpDbEntities();
+
+        var search = db.Depts.Where(x => x.DeptID == 3).FirstOrDefault();
+        if (search != null)
+        {
+            db.Depts.Remove(search); 
+            db.SaveChanges(); //commit;
+        }
+        else
+        {
+            Response.Write("Not found");
+        }
+
+Example: Dept entry form
+
+Dept Id : TextBox1    Button(Search)
+Dept Name : TextBox2
+
+Button(Add), Button(Update) Button(Delete)
+
+Label1
+
+
+Code:
+
+    EmpDbEntities db = new EmpDbEntities();
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            GridView1.DataSource = db.Depts.ToList();
+            GridView1.DataBind();
+        }
+    }
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+        Dept dept = new Dept() { DeptName = TextBox2.Text };
+        db.Depts.Add(dept);
+        db.SaveChanges();
+        GridView1.DataSource = db.Depts.ToList();
+        GridView1.DataBind();
+        Label1.Text = "Dept added";
+    }
+    protected void Button4_Click(object sender, EventArgs e)
+    {
+        var deptId = int.Parse(TextBox1.Text);
+        var search = db.Depts.Where(x => x.DeptID == deptId).FirstOrDefault();
+        if (search != null)
+        {
+            TextBox2.Text = search.DeptName;
+        }
+        else
+        {
+            Label1.Text = "Dept not found";
+        }
+    }
+    protected void Button2_Click(object sender, EventArgs e)
+    {
+        var deptId = int.Parse(TextBox1.Text);
+        var search = db.Depts.Where(x => x.DeptID == deptId).FirstOrDefault();
+        if (search != null)
+        {
+            search.DeptName = TextBox2.Text ;
+            db.SaveChanges();
+            Label1.Text = "Dept updated";
+            GridView1.DataSource = db.Depts.ToList();
+            GridView1.DataBind();
+        }
+        else
+        {
+            Label1.Text = "Dept not found";
+        }
+    }
+    protected void Button3_Click(object sender, EventArgs e)
+    {
+        var deptId = int.Parse(TextBox1.Text);
+        var search = db.Depts.Where(x => x.DeptID == deptId).FirstOrDefault();
+        if (search != null)
+        {
+            db.Depts.Remove(search);
+            db.SaveChanges();
+            Label1.Text = "Dept deleted";
+            GridView1.DataSource = db.Depts.ToList();
+            GridView1.DataBind();
+        }
+        else
+        {
+            Label1.Text = "Dept not found";
+        }
+    }
