@@ -1,0 +1,148 @@
+FormView and DetailsView
+====================================================================
+It offer templates to design insert/show & delete/update/ and navigation user interface for a single record.
+
+FormView has user-defined templates whereas DetailsView uses "GridView" like BoundFields (Boundfield,checkbox, HyperLink etc).
+
+ FormView and Templates
+ ----------------------
+
+ 1. EmptyDataTemplate --- UI of EmptyDataTemplate will be shown when
+			  data-source is empty.
+
+ 2. ItemTemplate - To display data.
+ 3. InsertTemplate - To design UI for insert
+ 4. EditTemplate  - To design EDIT UI
+ 5. PagerTemplate - Design for Navigation (Next/PRev etc)
+
+Example: Add FormView1
+
+ 1. Sidebar Menu + Edit Templates
+ 2. Design the Item Template
+
+    Dept No: Label1 - Eval("DeptID")
+    Dept Name: Label1 - Eval("DeptName")
+
+    Button(CommandName: New)  Button(CommandName:Edit)  Button(CommandName:Delete)
+
+ 3. DataKeyNames = "DeptID"
+
+ 4. EmptyDataTemplate
+ 
+      There is no data. 
+      Click on Button(CommandName: New) to add record
+
+
+ 5. Handle ModeChanging event 
+
+    This event will be raised when we change "Templates".
+
+ 6. Code to bind FormView and ModeChanging 
+
+  EmpDbEntities db = new EmpDbEntities();
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            FormView1.DataSource = db.Depts.ToList();
+            FormView1.DataBind();
+        }
+    }
+    protected void FormView1_ModeChanging(object sender, FormViewModeEventArgs e)
+    {
+        FormView1.ChangeMode(e.NewMode);
+        FormView1.DataSource = db.Depts.ToList();
+        FormView1.DataBind();
+    }      
+
+7. Design the "InsertItemTemplate"
+
+   DeptName : TextBox1
+   
+   Button(CommandName = "Insert"), Button("Cancel")
+
+8. Handle ItemInserting event
+
+ protected void FormView1_ItemInserting(object sender, FormViewInsertEventArgs e)
+    {
+        TextBox name = FormView1.FindControl("TextBox1") as TextBox;
+        Dept dept = new Dept();
+        dept.DeptName = name.Text;
+        db.Depts.Add(dept);
+        db.SaveChanges();
+
+        FormView1.ChangeMode(FormViewMode.ReadOnly);
+        FormView1.DataSource = db.Depts.ToList();
+        FormView1.DataBind();
+
+    }
+9. Design PagerTemplate
+
+   Button(CommandName = "Page", CommandArgument="First")
+
+   Button(CommandName = "Page", CommandArgument="Prev")
+   Button(CommandName = "Page", CommandArgument="Next")
+   Button(CommandName = "Page", CommandArgument="Last")
+
+10. Handle PageIndexChanging event
+
+ protected void FormView1_PageIndexChanging(object sender, FormViewPageEventArgs e)
+    {
+        FormView1.PageIndex = e.NewPageIndex;
+        FormView1.DataSource = db.Depts.ToList();
+        FormView1.DataBind();
+    }
+
+11. FormView1.AllowPaging = true
+
+
+12. Design EditItemTemplate
+
+    Dept ID: Label4(DeptID)
+
+    Dept Name : TextBox2 (DeptName)
+
+    Button(Update), Button(Cancel)
+
+13. Handle ItemUpdating event.
+
+ protected void FormView1_ItemUpdating(object sender, FormViewUpdateEventArgs e)
+    {
+        Label txtDeptId = FormView1.FindControl("Label3") as Label;
+        TextBox txtDeptName = FormView1.FindControl("TextBox2") as TextBox;
+
+        int id = int.Parse(txtDeptId.Text);
+
+        var search = db.Depts.Where(x => x.DeptID == id).FirstOrDefault();
+
+        if (search != null)
+        {
+            search.DeptName = txtDeptName.Text;
+            db.SaveChanges();
+        }
+
+        FormView1.ChangeMode(FormViewMode.ReadOnly);
+        FormView1.DataSource = db.Depts.ToList();
+        FormView1.DataBind();
+
+    }
+
+
+14. Handle ItemDeleting event
+
+protected void FormView1_ItemDeleting(object sender, FormViewDeleteEventArgs e)
+    {
+        Label lab = FormView1.FindControl("Label1") as Label;
+            var id = int.Parse(lab.Text);
+            var search = db.Depts.Where(x => x.DeptID == id).FirstOrDefault();
+            if (search != null)
+            {
+                db.Depts.Remove(search);
+                db.SaveChanges();
+            }
+            FormView1.DataSource = db.Depts.ToList();
+            FormView1.DataBind();
+        
+    }
+
