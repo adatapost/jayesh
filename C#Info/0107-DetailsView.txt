@@ -1,0 +1,58 @@
+DetailsView
+====================================================================
+DetailsView offer same feature as "FormView" except it uses "pre-defined boundFields".
+
+1. Add DetailsView
+2. Configure Columns - BoundFields, TemplateField
+3. Assign DataSource
+4. Edit Templates + Design PagerTemplate
+
+    Button(CommandName="Page", CommandArgument="First")
+    Button(CommandName="Page", CommandArgument="PRev")
+    Button(CommandName="Page", CommandArgument="NExt")
+    Button(CommandName="Page", CommandArgument="Last")
+
+5. AllowPaging = true
+
+6. Handle PageIndexChanging event:
+
+
+    EmpDbEntities db = new EmpDbEntities();
+
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            DetailsView1.DataSource = db.Depts.ToList();
+            DetailsView1.DataBind();
+        }
+    }
+    protected void DetailsView1_PageIndexChanging(object sender, DetailsViewPageEventArgs e)
+    {
+        DetailsView1.PageIndex = e.NewPageIndex;
+        DetailsView1.DataSource = db.Depts.ToList();
+        DetailsView1.DataBind();
+    }
+
+
+7. Handle ModeChanging event:
+
+protected void DetailsView1_ModeChanging(object sender, DetailsViewModeEventArgs e)
+    {
+        DetailsView1.ChangeMode(e.NewMode);
+        DetailsView1.DataSource = db.Depts.ToList();
+        DetailsView1.DataBind();
+    }
+
+8. Handle "ItemInserting" Event
+
+protected void DetailsView1_ItemInserting(object sender, DetailsViewInsertEventArgs e)
+    {
+        TextBox txtName = DetailsView1.FindControl("TextBox2") as TextBox;
+        Dept dep = new Dept();
+        dep.DeptName = txtName.Text;
+        db.Depts.Add(dep);
+        db.SaveChanges();
+
+    }
+
