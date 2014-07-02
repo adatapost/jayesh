@@ -1,0 +1,409 @@
+ASP.NET State Management Techniques
+=====================================================================
+
+HTTP is a stateless protocol and it cannot store data between requests either at client machine or server-machine unless we implements ASP.NET state management techniques.
+
+There are types of "state"
+
+  1. Client State -- Client machine or client programs are responbile 			to set the state.
+		     Client state is maintaned via cookies, hidden 		    fields, ViewState(ControlState), and Query String.
+
+  2. Server State -- Server state is maintained via database, file, 
+		     session, application, cache and profile.
+
+
+Client Side State Management
+================================================================
+1. ViewState -- ViewState is an object of StateBag class which persists                 controls properties and user-data.
+
+   
+    Each Page has "ViewState" property, that is an dictionary object     whose content is serilized/deserialized between requests.
+
+
+    Serialize means convert an "Object" to "byte-array" and deserialize      means convert "byte-array" to an "Object".
+
+     Store user data into ViewState
+     ------------------------------
+
+      ViewState["KeyName"] = Value;
+
+      e.g ViewState["no"] = 10;
+
+     Retrieve data from ViewState
+     ----------------------------
+
+      if(ViewState["keyName"] == null) {
+          //Not Exists
+       } else {
+          //Conversion
+          str = (string) ViewState["keyName"];
+        }
+
+      
+      Scope of ViewState
+      -------------------
+
+      The "ViewState" object is alive and active till that page is
+      requested.
+
+      Every page has own copy of ViewState. That means we cannot share
+      ViewState data.  (We will use Session , Cookie, Application,       Cache, Profile to share data between pages)
+
+
+
+ Example :
+
+    1. Add Label1, Button1
+
+    2. Code behind
+ protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            ViewState["StartTime"] = DateTime.Now;
+        }
+    }
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+        if (ViewState["StartDate"] != null)
+        {
+            DateTime start = DateTime.Parse(ViewState["StartTime"].ToString());
+            TimeSpan diff = DateTime.Now - start;
+            Label1.Text = diff.TotalMilliseconds.ToString();
+        }
+    }
+
+
+2. Hidden Field - <input type="hidden"/>
+
+   This control (or Tag) can store only "string" data per control/tag.
+
+   HiddenField.Value - is string property to store.embed value into 
+			web page without displaying.
+
+   
+
+   Example: 1. Add Button1, Label1, HiddenField1
+            2. Code behind
+
+   protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            HiddenField1.Value  = DateTime.Now.ToString();
+        }
+    }
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+           DateTime start = DateTime.Parse(HiddenField1.Value);
+           TimeSpan diff = DateTime.Now - start;
+           Label1.Text = diff.TotalMilliseconds.ToString();
+    }
+
+
+3. QueryString -- You can re-write data using address-bar URL.
+
+   Syntax;
+
+  http://siteName/file?key1=value1&key2=value2&......
+
+
+Ex: Sample3.aspx
+   
+  1. <a href="sample4.aspx?no=10&name=Raj">Query String Example</a>
+  2. No : TextBox1
+     Name : TextBox2
+      Button1
+  4. Click event of Button2:
+
+    Response.Redirect("sample4.aspx?no=" + TextBox1.Text + "&name=" + TextBox2.Text);
+
+   Sample4.aspx
+   1. Add LAbel1,Label2
+
+   2. Code in page_load (or any event)
+ 
+      Label1.Text = Request["no"];
+      Label2.Text = Request["name"];
+
+4. Cookies  -- Cookie is web-browser mechanism to persists string data.
+               
+
+   Cookie uses expiry datetime policy. If expiry is set then cookie will be stored into disk file. If expiry is not set then cookie will be stored into web-browser's RAM and will be released when web-browser gets closed.
+
+
+
+
+ First of all we've to use HttpCookie class to create cookie objects into server environemnt and then Response.Cookies collection will write them to "web-browser".
+
+ The "Request.Cookies" collection is used to read cookies from web-browser.
+
+   HttpCookie c1=new HttpCookie("key","value");
+
+   1. Create temporary cookie -- will persist till browser is opened.
+
+       Do not set c1.Expires property
+
+   2. To create persistent  cookie - Set Expires property
+
+       c1.Expires = DateTime.Now.AddDays(7); // for seven days
+
+   3. To delete temp/persistent cookie - Set Nagative DateTime to
+      Expires property
+
+      c1.Expires = DateTime.Now.AddDays(-1);
+      Response.Cookies.Add(c1); //Send to web-browser
+ 
+
+Ex:
+Label1
+
+Button1(Show) Button2(Create) Button3(Delete)
+
+
+protected void Button1_Click(object sender, EventArgs e)
+    {
+        if (Request.Cookies["name"] == null)
+        {
+            Label1.Text = "No Cookie";
+        }
+        else
+        {
+            Label1.Text = Request.Cookies["name"].Value;
+        }
+    }
+
+
+protected void Button2_Click(object sender, EventArgs e)
+    {
+        //Create HttpCookie object 
+        HttpCookie c1 = new HttpCookie("name", "rajesh");
+
+        //Send the cookie object to web-browser
+        Response.Cookies.Add(c1);
+    }
+
+ protected void Button3_Click(object sender, EventArgs e)
+    {
+        HttpCookie c1 = Request.Cookies["name"];
+        if (c1 != null)
+        {
+            c1.Expires = DateTime.Now.AddDays(-1);
+            Response.Cookies.Add(c1);
+        }
+    }
+
+
+Server Side State Management
+===================================================================
+
+1. Session property -- The Session is an object of HttpSessionState                        class and which is created automatically when
+                       a web-browser request a resource very first 			time.
+
+                       And this object will be removed/disposed after 			the web-browser is called.
+
+
+  How to add data into session?
+  ==============================
+
+   Session["key"] = value;
+
+  How to read data from session?
+  ================================
+
+   if(Session["key"]!=null) {
+     //exists
+   }
+
+  How to delete data from session?
+  =================================
+    Single entry -    Session.Remove("key");
+    Remove all data - Session.Abandon();
+
+Ex:
+
+ Label1
+
+  Button1(Show) Button2(Create) Button3(Delete)
+
+ Code:
+
+  protected void Button1_Click(object sender, EventArgs e)
+    {
+        if (Session["name"] == null)
+        {
+            Label1.Text = "No Data";
+        }
+        else
+        {
+            Label1.Text = Session["name"].ToString();
+        }
+    }
+    protected void Button2_Click(object sender, EventArgs e)
+    {
+        Session["name"] = "Rajesh Kuamr";
+    }
+    protected void Button3_Click(object sender, EventArgs e)
+    {
+        if (Session["name"] != null)
+        {
+            Session.Remove("name");
+        }
+    }
+ 
+
+ Session.TimeOut   :   
+ ================    
+
+Timeout property set the disposing policy of Session. The ASP.NET's garbage collector dispose those session objects whose Timeout (in minuts) is exceed.
+
+ Default value is 20 minutes.
+
+ e.g
+
+   Session.Timeout = 60;  //set 60 mins
+
+  Label1.Text = Session.Timeout.ToString(); //read 
+
+ 
+ Session.SessionID :
+ =======================
+
+  It is uniqe identity  of  web-browser and it is stored into "cookie".
+
+    LAbel1.Text = Session.SessionID;
+
+
+
+2. Application State  : This state store application wide data. It means you can store/retrieve data from application globally.
+
+
+   Application object will be created when a web-app is requested first time and remain into memory till web-app is not shutdown or in case of exception or restarted.
+
+
+
+  Application is dictionary object but it is shared by number of users   so its usage is prohibited.
+
+
+   To use Application to store data
+  ==================================
+
+   Application.Lock();  // set lock for other users
+   Application["counter"] = 1;
+   Application.UnLock(); // unlock for other users
+
+   To Read data
+  ================
+   Application.Lock();
+   if(Application["key"]!=null) {}
+   Application.UnLock();
+
+  To remove data
+   =================
+   Application.Remove("key");
+  
+
+
+
+Example: Page request counter
+
+1. Add Label1
+
+2. Code in page_load
+
+protected void Page_Load(object sender, EventArgs e)
+    {
+        Application.Lock();
+        if (Application["counter"] == null)
+        {
+            Application["counter"] = 0;
+        }
+        int n = int.Parse(Application["counter"].ToString());
+        n++;
+        Application["counter"] = n;
+        Application.UnLock();
+
+        Label1.Text = n.ToString();
+    }
+
+
+3. Cache - Page & Data Cache
+ ==========================================================
+ This is the state used to improve the ASP.NET webform performance. This system automatically store page result into server memory and reuse them.
+
+
+
+ Cache the page
+ ================
+ To Define a cache we must have  add OutputCache directive at the top of markup.
+
+
+Ex:
+
+<%@ Page Language="C#" AutoEventWireup="true" CodeFile="PageAbout.aspx.cs" Inherits="PageAbout" %>
+<%@ OutputCache Duration="300" VaryByParam="None" %>
+<!DOCTYPE html>
+ ....
+ ....
+
+
+
+Cache Duration
+============== 
+
+ This parameter represent time in seconds and ASP.NET re-cache this page after excced time as above.
+
+
+VaryByParam
+=============
+
+Value "None" means re-cache is only possible after 300 seconds.
+
+Value "ControlID" means re-cache will be created when value of control is changed (TextBox, DropDown, Checkbox etc)
+
+
+
+ <%@ Page Language="C#" AutoEventWireup="true" CodeFile="PageAbout.aspx.cs" Inherits="PageAbout" %>
+<%@ OutputCache Duration="300" VaryByParam="TextBox1" %>
+<!DOCTYPE html>
+  ....
+
+  
+
+Use more than one control id:
+
+<%@ OutputCache Duration="300" VaryByParam="TextBox1,TextBox2" %>
+
+
+
+Data Cache
+=========================================
+
+The "Cache" property is used to store/read/remove data cache.
+
+
+Example:
+
+1. GridView1, Label1
+
+2. Code:
+
+protected void Page_Load(object sender, EventArgs e)
+    {
+        //Cache.Remove("city");
+        if (Cache["city"] == null)
+        {
+            Cache["city"] = new String[] {"Mehsana","Patan","Surat","MM" };
+            Cache["last_cache"] = DateTime.Now;
+        }
+
+        GridView1.DataSource = Cache["city"];
+        GridView1.DataBind();
+
+        if (Cache["last_cache"] != null)
+        {
+            Label1.Text = Cache["last_cache"].ToString();
+        }
+    }
+
+
