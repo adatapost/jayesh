@@ -1,0 +1,152 @@
+ASP.NET Form based authentication and authorization system
+=====================================================================
+
+ The Authentication & Authorization system implicitly uses "MSSQL" server database to store role (types/category of user), member (user) info and many more things (Profile data).
+
+
+ Steps to configure authentication & authorization to your webapp 
+ =========================
+
+1. We assume that we have two types of "users -- roles".
+
+    => Admin 
+    => Customer (or member)
+
+   
+   So, you may define app structure:
+
+   /webapp/
+   |
+   |-----------/admin  -- admin files/programs/pages
+   |
+   |----------/customer -- Customer programs/files/pages
+   |
+   |
+   | public pages/folders etc
+   | default.aspx
+   | login.aspx
+
+
+2. WebSite Menu + ASP.NET Configuration -- This option will open a WAT - Website Administrative Tool.
+
+3. Click on "Security"
+
+4. In Users section, click on "Set Authentication Type" + Select "From    the Internet" + Done.
+
+5. In ROles section, Click on "Enable Roles" + Create or manage Roles
+
+    Create two role names :  admin and customer + Back
+
+6.  In "Access Rules", click on "Manage access rules"
+
+     Select "Admin" role and click on "Add new access rules"
+
+             Anonymous user : Deny
+             customer : Deny
+             admin : allow
+
+    Select "Customer" folder and click on "Add new access rule"
+
+           Anonymous user : Deny
+             customer : allow
+             admin : deny
+
+
+     + Done
+
+7. Create on "Create User" to create "admin" role user.
+
+
+8. Close the WAT
+
+
+
+9. Open Login.aspx 
+
+    1. Add "Login" control
+    2. Add Create user wizard
+    3. Add PasswordRecover control
+
+  Double click on "Create User Wizard" to open "CreatedUser" event:
+
+protected void CreateUserWizard1_CreatedUser(object sender, EventArgs e)
+    {
+        System.Web.Security.Roles.AddUserToRole(CreateUserWizard1.UserName, "customer");
+
+    }
+  
+
+10. Add Global.asax and trun off jQuery validation by adding:
+
+     void Application_Start(object sender, EventArgs e) 
+    {
+        // Code that runs on application startup
+        ValidationSettings.UnobtrusiveValidationMode = UnobtrusiveValidationMode.None;
+    }
+
+11. Open /admin/masterpage  and add two controls : LoginName and     LoginStatus.
+12. Open /customer/masterpage  and add two controls : LoginName and     LoginStatus.
+
+13. open /website/masterpage
+
+     > Add Login View  + Side Bar Menu + Edit RolesGroup + add "admin"        and "customer" role group.
+
+     > Side Bar Menu + Select Anonymous or Admin or Customer view to add view specific links or design.
+
+14. Add "ChangePassword" control into page inside "admin" or "customer"     folder.
+
+
+After configuring Authentication & Authorization you can use "Profile" state.
+======================================================================
+
+ Profile state allow us to save additional data/info of customer in  existing database without writing SQL statements.
+
+ How to create profile fields:
+
+   1. Open /web.cofig file 
+
+   2. Insert followng code inside <system.web> tag.
+
+     <profile>
+        <properties>
+          <add name="FullName" type="System.String"/>
+          <add name="Photo" type="System.String"/>
+          <add name="BirthDate" type="System.DateTime"/>
+        </properties>
+      </profile>
+
+  
+Now, to read these properties inside the "secured" pages:
+
+     LAbel1.Text = Profile.FullName;
+     Label2.Text = Profile.BidthDate.ToString();
+
+ 
+To update profile properties,
+
+    Profile.FullName = TextBox1.Text;
+
+
+Example: Update Profile
+
+
+ protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            TextBox1.Text = Profile.FullName;
+            TextBox2.Text = Profile.BirthDate.ToString("dd-MMM-yyyy");
+            Image1.ImageUrl = "~/Photo/" + Profile.Photo;
+        }
+    }
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+        Profile.FullName = TextBox1.Text;
+        Profile.BirthDate = DateTime.Parse(TextBox2.Text);
+        if (FileUpload1.HasFile)
+        {
+            Profile.Photo = FileUpload1.FileName;
+            FileUpload1.SaveAs(Server.MapPath("~/Photo/" + FileUpload1.FileName));
+            Image1.ImageUrl = "~/Photo/" + Profile.Photo;
+        }
+    }

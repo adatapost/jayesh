@@ -1,0 +1,45 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="MasterPage.master.cs" Inherits="MasterPage" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+    <asp:ContentPlaceHolder id="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+        <div>
+            <h1>Sample Site</h1>
+        </div>
+        <div>
+            &nbsp;<asp:LoginView ID="LoginView1" runat="server">
+                <AnonymousTemplate>
+                    <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl="~/Default.aspx">Home</asp:HyperLink>
+                </AnonymousTemplate>
+                <RoleGroups>
+                    <asp:RoleGroup Roles="admin">
+                        <ContentTemplate>
+                            <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl="~/admin/Default.aspx">Home</asp:HyperLink>
+                        </ContentTemplate>
+                    </asp:RoleGroup>
+                    <asp:RoleGroup Roles="customer">
+                        <ContentTemplate>
+                            <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl="~/customer/Default.aspx">Home</asp:HyperLink>
+                        </ContentTemplate>
+                    </asp:RoleGroup>
+                </RoleGroups>
+            </asp:LoginView>
+            <asp:LoginStatus ID="LoginStatus1" runat="server" />
+            <asp:LoginName ID="LoginName1" runat="server" />
+        </div>
+        <hr />
+    <div>
+        <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server">
+        
+        </asp:ContentPlaceHolder>
+    </div>
+    </form>
+</body>
+</html>
