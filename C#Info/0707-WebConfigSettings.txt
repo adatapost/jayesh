@@ -1,0 +1,143 @@
+Web.Config Settings
+================================================================
+
+ 1. Application Settings
+  
+     	<appSettings> section allow us to define key-value pairs 
+	which are used anywhere within the application.
+
+Example: web.config
+=======        
+
+ <configuration>
+  <appSettings>
+    <add key="title" value="The Appleman Pvt Ltd"/>
+    <add key="infoEmail" value="info@gmail.com"/>
+  </appSettings>
+  .......
+
+  Use appSettings properties declaratively: <%$ Expression %> Or Choose "Expression" property from property window for ASP.NET Control.
+
+
+   Ex:
+   <asp:Label ID="Label1" 
+            runat="server" 
+             Text="<%$ AppSettings:title %>"></asp:Label>
+
+   Use  System.Web.Configuration.WebConfigurationManager.AppSettings property to read appSettings section programatically.
+
+  Ex:
+
+Label2.Text = System.Web.Configuration
+         .WebConfigurationManager.AppSettings["infoEmail"];
+
+
+
+2. ConnectionStrings section to define application wide database    connections.
+
+
+<configuration>
+   ......
+   ......
+
+  <connectionStrings>
+    <add name="CnStr" 
+         providerName="System.Data.SqlClient" 
+         connectionString="Copy+Pasted Connection String"/>
+ 
+     .....
+  </connectionStrings>
+  ......
+  ......
+
+  To read concectionString/Provider name use     System.Web.Configuration.WebConfigurationManager.ConnectionStrings["CnStr"].ConnectionString property.
+
+
+ Ex:
+
+  String cnStr = System.Web.Configuration
+                  .WebConfigurationManager
+                  .ConnectionStrings["CnStr"].ConnectionString
+  using(SqlConnection cn = new SqlConnection(cnStr))
+   {
+    ///
+    }
+
+
+
+Global & Local Resources  (.resx)
+===================================================================
+
+Global & Local resources allow us to store page specific or application specific data outside the .aspx/.master pages. That way we can re-use same set of data for one or more pages.
+
+Global Resource file contains key-value pairs which are used by all webpages inside the application. You can use key=value pairs programatically or declaratively.
+
+
+1. Create a global resource 
+
+   > Add ASP.NET special folder App_GlobalResources
+   > Add New Item + Select Resource File and set Base (main) name for     the resource file.
+
+      e.g   HelloResource.resx
+            
+
+            MyAppResource.resx
+
+
+    In fact, the name of Resource file is the name of "Class" through     which we can access properties programatically or declaratively.
+
+   >Add some strings - key-value pairs
+
+   > In webpages, use "Expression" property of ASP.NET control to
+     set value from resource class/property
+
+   
+   >To read resource property programatically,
+
+      Resources.YourResource.Property.
+
+e.g LinkButton1.Text = Resources.HelloResource.AppTitle;
+
+
+Local Resource File
+=====================
+
+ LocalResource file is for a specific page. It means it contains data for the specific page.
+
+  e.g
+
+   To localize the "Login.aspx", you have to create "Login.aspx.resx"    resource under the "App_LocalResources" folder.
+
+  Login.aspx.resx
+  ---------------
+  USername.Text  = Username
+  Username.BackColor = Red
+  Label2.Text = Password
+  btnSubmit.Text = Login
+
+
+  In markup, (login.aspx)
+
+     <p>
+          <asp:Label 
+              ID="Label1" 
+              runat="server" 
+              meta:resourcekey="Username"
+              Text="Label"></asp:Label>
+        </p>
+        <p>
+            <asp:TextBox ID="TextBox1" 
+               
+                 runat="server"></asp:TextBox>
+        </p>
+        <p>
+            <asp:Label ID="Label2"
+                 meta:resourcekey="Label2"
+                 runat="server" Text="Label"></asp:Label>
+        </p>
+        <p>
+            <asp:TextBox ID="TextBox2" runat="server"></asp:TextBox>
+        </p>
+        <p>
+            <asp:Button ID="btnSubmit"  meta:resourcekey="btnSubmit" runat="server" Text="Button" />
+        </p>
