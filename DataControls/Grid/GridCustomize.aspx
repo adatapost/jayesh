@@ -15,9 +15,9 @@
     <form id="form1" runat="server">
         <div>
 
-     <table>
+     <table border="1">
          <tr>
-             <td>Name</td>
+             <td><strong>Name</strong></td>
              <td>
                  <asp:TextBox ID="txtEmpName" runat="server"></asp:TextBox>
              </td>
@@ -109,7 +109,9 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td>&nbsp;</td>
+                                <td>
+                                    <asp:FileUpload ID="FileUpload1" runat="server" />
+                                </td>
                                 <td colspan="2">
                                     <asp:LinkButton ID="LinkButton1" runat="server" CommandName="Update">Update</asp:LinkButton>
                                     <asp:LinkButton ID="LinkButton2" runat="server" CommandName="Cancel">Cancel</asp:LinkButton>
@@ -123,13 +125,13 @@
                                 <td rowspan="4">
                                     <asp:Image ID="Image1" runat="server" Height="120px" ImageUrl='<%# Eval("Photo","~/Photo/{0}") %>' Width="130px" />
                                 </td>
-                                <td>No</td>
+                                <td><em>No</em></td>
                                 <td>
-                                    <asp:Label ID="Label1" runat="server" Text='<%# Eval("EmpId") %>'></asp:Label>
+                                    <asp:TextBox ID="Label1" runat="server" Text='<%# Eval("EmpId") %>'></asp:TextBox>
                                 </td>
                             </tr>
                             <tr>
-                                <td>Name</td>
+                                <td><em>Name</em></td>
                                 <td>
                                     <asp:Label ID="Label2" runat="server" Text='<%# Eval("EmpName") %>'></asp:Label>
                                 </td>

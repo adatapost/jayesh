@@ -1,0 +1,77 @@
+ASP.NET Ajax Extension
+====================================================================
+
+ASP.NET Ajax Extension is set of controls which provide background request & response services.
+
+
+If you want to use JavaScript or jQuery for background requests / response then do not use "AjaxExtension".
+
+
+ 1. ScriptManager Control : This control add Ajax Extension Javascript
+			    files in your web-page.
+
+			    Put/add scriptManager onto the page before
+				you go to any AjaxExtension.
+
+ 2. UpdatePanel : This control ensure that any ASP.NET control's background activities performed via AjaxExtension JavaScript code.
+
+		  Add those controls whose server actions are treated                   as background or asynchronious will be placed inside 		  the "UpdatePanel".
+
+
+Example:
+
+1. Add SCriptManager1, 
+   Label1 
+   
+   UpdatePanel1------------------------
+   |
+   | Label2   Button1
+   |-----------
+
+2. Code
+
+ protected void Page_Load(object sender, EventArgs e)
+    {
+        Label1.Text = DateTime.Now.ToString();
+    }
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+        Label2.Text = DateTime.Now.ToString();
+    }
+
+
+ UpdatePanel.UpdateMode = Always | Conditional
+ ==================================================================
+  UpdatePanel is request on any changes on control state if UpdateMode   is set to "Alaways".
+   
+  Always use "Conditional" when you want to update "UpdatePanel"   children on an event of action -- Clicking, selection etc"
+
+3. Timer : It raises "Tick" event on duration of "Interval" property            exceeds.
+
+
+Example:
+
+1. Controls in UpdatePanel1  (UpdatePanel1.UpdateMode = Conditional)
+
+      No : TextBox1  Button1
+
+2. Controls in UpdatePanel2 (Conditional mode)
+
+      Label1  Timer1 (Interval = 1000)
+
+3. Code:
+
+    protected void Timer1_Tick(object sender, EventArgs e)
+    {
+        Label2.Text = DateTime.Now.ToString();
+    }
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+        int no;
+        int.TryParse(TextBox1.Text, out no);
+        Label1.Text = (no * no).ToString();
+    }
+
+
+4. UpdateProgress control : It is linked with "UpdatePanel" to show message (or graphics) till UpdatePanel is busy with background tasks.
+

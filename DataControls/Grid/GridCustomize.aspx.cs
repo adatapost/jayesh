@@ -35,25 +35,26 @@ public partial class Grid_GridCustomize : System.Web.UI.Page
         TextBox joinDate = GridView1.Rows[e.RowIndex].FindControl("TextBox2") as TextBox;
         CheckBox mstat = GridView1.Rows[e.RowIndex].FindControl("CheckBox1") as CheckBox;
         Label no = GridView1.Rows[e.RowIndex].FindControl("Label1") as Label;
+        FileUpload file = GridView1.Rows[e.RowIndex].FindControl("FileUpload1") as FileUpload;
+
+
 
         using (SqlConnection cn = new SqlConnection())
         {
             using (SqlCommand cmd = new SqlCommand())
             {
                 cn.ConnectionString = Db.CnStr;
-                cmd.CommandText = "update emp set empname=@p1,joindate=@p3,mstatus=@p4 where empid=@p2";
+                cmd.CommandText = "update emp set empname=@p1,joindate=@p3,mstatus=@p4,photo=@p5 where empid=@p2";
                 cmd.Parameters.AddWithValue("@p1", name.Text);
                 cmd.Parameters.AddWithValue("@p3", joinDate.Text);
                 cmd.Parameters.AddWithValue("@p4", mstat.Checked);
+                cmd.Parameters.AddWithValue("@p5", file.FileName);
                 cmd.Parameters.AddWithValue("@p2", no.Text);
                 cmd.Connection = cn;
                 cn.Open();
-                using (SqlDataReader dr = cmd.ExecuteReader())
-                {
-                    GridView1.DataSource = dr;
-                    GridView1.DataBind();
-                }
+                cmd.ExecuteNonQuery();
                 cn.Close();
+                file.SaveAs(Server.MapPath("~/Photo/" + file.FileName));
 
             }
         }

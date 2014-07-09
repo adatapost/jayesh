@@ -19,5 +19,9 @@ public partial class Grid_GridButton1 : System.Web.UI.Page
     protected void GridView1_RowCommand(object sender, GridViewCommandEventArgs e)
     {
         Label1.Text = "Button is pressed " + e.CommandName + "  " + e.CommandArgument;
+        if (e.CommandName == "22")
+        {
+
+        }
     }
 }

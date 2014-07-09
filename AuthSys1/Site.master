@@ -1,0 +1,33 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="Site.master.cs" Inherits="Site" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+    <asp:ContentPlaceHolder id="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <form id="form1" runat="server">
+    <div>
+        <div>
+            <h1>
+                <asp:Label ID="Label1" runat="server" Text="<%$ AppSettings:title %>"></asp:Label></h1>
+                <p>
+
+                    <asp:HyperLink ID="HyperLink1" runat="server" NavigateUrl="<%$ AppSettings:infoEmail %>" Text="<%$ AppSettings:infoEmail %>"></asp:HyperLink>
+
+                </p>
+        </div>
+        <div>
+            <a href="admin/Default.aspx">Admin Login</a>
+            <a href="member/Default.aspx">Member Login</a>
+        </div>
+        <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server">
+        
+        </asp:ContentPlaceHolder>
+    </div>
+    </form>
+</body>
+</html>
